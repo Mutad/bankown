@@ -19,7 +19,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('/bot/getupdates', function() {
-//     // $updates = Telegram::getUpdates();
-//     // return (json_encode($updates));
-// });
+Route::get('/bot/getupdates', function() {
+    $updates = Telegram::getWebhookInfo();
+    return (json_encode($updates));
+});

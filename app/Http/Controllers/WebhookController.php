@@ -13,11 +13,10 @@ class WebhookController extends Controller
 {
     public function hook()
     {
+        Log::debug('Hook');
         try {
-            //code...
-
-            $telegram = new \Telegram\Bot\Api;
             $update = Telegram::commandsHandler(true);
+            $telegram = new \Telegram\Bot\Api;
 
             Log::debug('Incomming '.$update->detectType().' from '.$update->getMessage()['from']['username'].' in chat w/ '.$update->getMessage()['chat']['username']."\n".$update->getMessage()['text']);
 
@@ -32,7 +31,10 @@ class WebhookController extends Controller
                 break;
 
             case 'callback_query':
+                
                 $result = json_decode($update, true);
+
+                Log::debug(print_r($result,true));
 
                 $callback_data = $result['callback_query']['data'];
                 $callback_id = $result['callback_query']['message']['chat']['id'];
@@ -41,18 +43,20 @@ class WebhookController extends Controller
                 $arguments = explode(' ', $callback_data);
                 $command = array_shift($arguments);
 
-                // Log::debug('Command: '.$command. "\n". 'Arguments: '.json_encode($arguments));
+                Log::debug('Command: '.$command. "\n". 'Arguments: '.json_encode($arguments));
 
-                $command_obj = new $command();
+                // $command_obj = new $command();
 
-                $command_obj->setArguments($arguments);
-                $command_obj->make($telegram, $update, []);
+                $telegram->getCommandBus()->execute($callback_data, $update, ['offset'=>0,'length'=>strlen($callback_data)]);
+
+                // $command_obj->setArguments($arguments);
+                // $command_obj->make($telegram, $update, []);
 
 
                 break;
         }
         } catch (\Throwable $th) {
-            // Log::error($th);
+            Log::error($th);
         }
     }
 

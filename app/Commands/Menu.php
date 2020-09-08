@@ -25,7 +25,7 @@ class Menu extends Command
     {
         $keyboard = Keyboard::make()->inline()
         ->row(
-            Keyboard::inlineButton(['text' => 'Select card', 'callback_data' => 'App\Commands\Cards']),
+            Keyboard::inlineButton(['text' => 'Select card', 'callback_data' => 'cards']),
             // Keyboard::inlineButton(['text' => 'Dev tools', 'callback_data' => 'App\Commands\DevTools']),
         )->row(
             Keyboard::inlineButton(['text' => '⚙️Settings', 'callback_data' => 'your_callback_data']),
