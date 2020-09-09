@@ -14,4 +14,9 @@ class TelegramUser extends Model
    {
        return $this->hasMany('App\Card', 'telegram_user_id', 'id');
    }
+
+   public function contacts()
+   {
+       return $this->belongsToMany('App\TelegramUser','contacts','user_id','contact_id');   
+   }
 }

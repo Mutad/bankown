@@ -13,6 +13,8 @@ class Placeholder extends Command
      */
     protected $name = "your_callback_data";
 
+    protected $aliases = ['placeholder'];
+
     /**
      * @var string Command Description
      */

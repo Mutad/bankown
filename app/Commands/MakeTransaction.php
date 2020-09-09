@@ -17,7 +17,7 @@ class MakeTransaction extends Command
     protected $name = "transaction";
 
     /** @var string Command Argument Pattern */
-    protected $pattern = '{card_id} {recipient_card_id} {money}';
+    protected $pattern = '{card_id} {recipient_card_id?} {money?}';
 
     /**
      * @var string Command Description
@@ -29,71 +29,102 @@ class MakeTransaction extends Command
      */
     public function handle()
     {
-        if (count($this->arguments) == 3&&!isset($this->arguments['card_id'])){
-            $this->arguments = [
-                'card_id'=>$this->arguments[0],
-                'recipient_card_id'=>$this->arguments[1],
-                'money'=>$this->arguments[2],
-            ];
+        // FIXME idk why but i cant parse arguments
+        if (!isset($this->arguments['card_id'])) {
+            $data = [];
+            switch (count($this->arguments)) {
+                case 3:
+                    $data['money'] = $this->arguments[2];
+                    // no break
+                case 2:
+                    $data['recipient_card_id'] = $this->arguments[1];
+                    // no break
+                case 1:
+                    $data['card_id'] = $this->arguments[0];
+                break;
+            }
+            $this->arguments = $data;
         }
-        $update = $this->getUpdate();
-        $keyboard = Keyboard::make()->inline()
-        ->row(
-            Keyboard::inlineButton(['text' => 'Show your wallet', 'callback_data' => 'cards']),
-        );
 
-        if (count($this->arguments) != 3) {
+
+        $update = $this->getUpdate();
+        $user = TelegramUser::find($update->getMessage()['chat']['id']);
+        $keyboard = Keyboard::make()->inline();
+
+        Log::debug(print_r($this->getArguments(), true));
+
+
+        if (count($this->arguments) == 0) {
+            $text = "Command usage\n<code>/transaction (your card number) (recipient's card number) (money)\n\n/transaction (your card number) (recipient's username) (money)</code>";
+        } elseif (count($this->arguments) == 1) {
+            foreach ($user->contacts as $key => $contact) {
+                $keyboard->row(
+                    Keyboard::inlineButton(['text'=>$contact->username,'callback_data'=>'transaction '.$this->arguments['card_id'].' '.$contact->username])
+                );
+            }
             // List of arguments is not full
             $text = "Enter the recipient's nickname and the amount of money to transfer\n\n<i>Example</i>\n<code>@decepti 100</code>";
-            $user = TelegramUser::find($update->getMessage()['chat']['id']);
-            $user->state = "transaction ".$user->default_card_id;
+            $user->state = "transaction ".$this->arguments['card_id'];
             $user->save();
-        } elseif (!$card = Card::find($this->arguments['card_id'])) {
-            // Cannot find sender's card
-            $text = "🙁Your card not found";
-            Log::error('Card not found. '. $update);
-        } elseif ($card->balance < $this->arguments['money']) {
-            // Not enough money
-            $text = "😭Net enough money to complete transaction\nYour balance: ".$card->getBalance();
-        } elseif ($this->arguments['money']<0.1) {
-            $text = "😁Thats a lot of data to handle\nminimum transaction is 0.1";
-        } elseif (is_numeric($this->arguments['recipient_card_id']) && !$recipient_card =Card::find($this->arguments['recipient_card_id'])) {
-            // Recipient card number not found
-            $text = "😕Recipient card not found";
-            Log::error('Card not found. '. $update);
-        } elseif (!is_numeric($this->arguments['recipient_card_id'])) {
-            // Found recipient by username
-            if (!$recipient = TelegramUser::where('username', ltrim($this->arguments['recipient_card_id'], '@'))->first()) {
-                $text = "😒 ".$this->arguments['recipient_card_id']." has not yet used the services of our bank, what a shame";
-            } else {
-                if (!$recipient->default_card_id) {
-                    // Recipient have no default card id
-                    // Getting first card available
+        } elseif (count($this->arguments) == 2) {
+            $text = "Enter the amount of money to transfer";
+        } elseif (count($this->arguments) == 3) {
+            // All arguments are set
+            // Validating arguments
 
-                    if ($recipient->cards()->count() == 0) {
-                        $text = "😕This recipient have no available cards";
-                    } else {
-                        $recipient_card = $recipient->cards[0];
-                        $text = $this->sendTransaction($card, $recipient_card);
-                    }
+            if (!$card = Card::find($this->arguments['card_id'])) {
+                // Cannot find sender's card
+                $text = "🙁Your card not found";
+                Log::error('Card not found. '. $update);
+            } elseif ($card->balance < $this->arguments['money']) {
+                // Not enough money
+                $text = "😭Net enough money to complete transaction\nYour balance: ".$card->getBalance();
+            } elseif ($this->arguments['money']<0.1) {
+                $text = "😁Thats a lot of data to handle\nminimum transaction is 0.1";
+            } elseif($this->arguments['card_id'] == $this->arguments['recipient_card_id']){
+                $text = "😁You cant make transaction to same card";
+            } elseif (is_numeric($this->arguments['recipient_card_id']) && !$recipient_card =Card::find($this->arguments['recipient_card_id'])) {
+                // Recipient card number not found
+                $text = "😕Recipient card not found";
+                Log::error('Card not found. '. $update);
+            } elseif (!is_numeric($this->arguments['recipient_card_id'])) {
+                // Found recipient by username
+                if (!$recipient = TelegramUser::where('username', ltrim($this->arguments['recipient_card_id'], '@'))->first()) {
+                    $text = "😒 ".$this->arguments['recipient_card_id']." has not yet used the services of our bank, what a shame";
                 } else {
-                    // Default card is set
-
-                    if (!$recipient_card = $recipient->cards()->find($recipient->default_card_id)) {
-                        // Recipient card number not found
-                        $text = "😕Recipient card not found";
-                        Log::error('Card not found. '. $update);
+                    if (!$recipient->default_card_id) {
+                        // Recipient have no default card id
+                        // Getting first card available
+    
+                        if ($recipient->cards()->count() == 0) {
+                            $text = "😕This recipient have no available cards";
+                        } else {
+                            $recipient_card = $recipient->cards[0];
+                            $text = $this->sendTransaction($card, $recipient_card);
+                        }
                     } else {
-                        $text = $this->sendTransaction($card, $recipient_card);
+                        // Default card is set
+    
+                        if (!$recipient_card = $recipient->cards()->find($recipient->default_card_id)) {
+                            // Recipient card number not found
+                            $text = "😕Recipient card not found";
+                            Log::error('Card not found. '. $update);
+                        } else {
+                            $text = $this->sendTransaction($card, $recipient_card);
+                        }
                     }
                 }
+            } else {
+                // Found recipient by card id
+                // All arguments are valid
+                // Sending transaction
+                $text = $this->sendTransaction($card, $recipient_card);
             }
-        } else {
-            // Transaction correct
-            $text = $this->sendTransaction($card, $recipient_card);
         }
 
-
+        $keyboard->row(
+            Keyboard::inlineButton(['text' => 'Show your wallet', 'callback_data' => 'cards']),
+        );
 
         $data = [
             'text'=>$text,
