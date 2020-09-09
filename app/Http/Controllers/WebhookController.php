@@ -13,7 +13,6 @@ class WebhookController extends Controller
 {
     public function hook()
     {
-        Log::debug('Hook');
         try {
             $update = Telegram::commandsHandler(true);
             $telegram = new \Telegram\Bot\Api;
@@ -34,30 +33,35 @@ class WebhookController extends Controller
                 
                 $result = json_decode($update, true);
 
-                Log::debug(print_r($result,true));
-
                 $callback_data = $result['callback_query']['data'];
-                $callback_id = $result['callback_query']['message']['chat']['id'];
-                $callback_message_id = $result['callback_query']['message']['message_id'];
+                // $callback_id = $result['callback_query']['message']['chat']['id'];
+                // $callback_message_id = $result['callback_query']['message']['message_id'];
 
-                $arguments = explode(' ', $callback_data);
-                $command = array_shift($arguments);
+                // $arguments = explode(' ', $callback_data);
+                // $command = array_shift($arguments);
 
-                Log::debug('Command: '.$command. "\n". 'Arguments: '.json_encode($arguments));
+                // Log::debug('Command: '.$command. "\n". 'Arguments: '.json_encode($arguments));
 
                 // $command_obj = new $command();
-
-                $telegram->getCommandBus()->execute($callback_data, $update, ['offset'=>0,'length'=>strlen($callback_data)]);
-
                 // $command_obj->setArguments($arguments);
                 // $command_obj->make($telegram, $update, []);
-
+                
+                // $message_update = $update['callback_query'];
+                // $message_update['message']['entities'][0] = ['offset'=>0,'length'=>strlen($callback_data),'type'=>'bot_command'];
+                // $update['callback_query'] = $message_update;
+                // $update['callback_query']['message']['entities'][0] = ['offset'=>0,'length'=>strlen($callback_data),'type'=>'bot_command'];
+                $this->triggerCommand($callback_data,$update);
 
                 break;
         }
         } catch (\Throwable $th) {
             Log::error($th);
         }
+    }
+
+    private function triggerCommand($command,$update){
+        $telegram = new \Telegram\Bot\Api;
+        $telegram->getCommandBus()->execute($command, $update, ['offset'=>0,'length'=>strlen($command),'type'=>'bot_command']);
     }
 
     public function processMessage($update)

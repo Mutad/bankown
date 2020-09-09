@@ -6,17 +6,17 @@ use Telegram;
 use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Commands\Command;
 
-class Menu extends Command
+class Placeholder extends Command
 {
     /**
      * @var string Command Name
      */
-    protected $name = "menu";
+    protected $name = "your_callback_data";
 
     /**
      * @var string Command Description
      */
-    protected $description = "Open main menu";
+    protected $description = "Placeholder";
 
     /**
      * @inheritdoc
@@ -27,14 +27,11 @@ class Menu extends Command
         
         $keyboard = Keyboard::make()->inline()
         ->row(
-            Keyboard::inlineButton(['text' => 'Select card', 'callback_data' => 'cards']),
-            // Keyboard::inlineButton(['text' => 'Dev tools', 'callback_data' => 'App\Commands\DevTools']),
-        )->row(
-            Keyboard::inlineButton(['text' => '⚙️Settings', 'callback_data' => 'your_callback_data']),
+            Keyboard::inlineButton(['text' => 'Show menu', 'callback_data' => 'menu']),
         );
 
         $data = [
-            'text'=>'Menu',
+            'text'=>'This feature is in development, try it later',
             'message_id'=> $this->getUpdate()->getMessage()['message_id'],
             'chat_id'=>$this->getUpdate()->getChat()['id'],
             'reply_markup'=> $keyboard

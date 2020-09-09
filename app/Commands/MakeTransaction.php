@@ -39,7 +39,7 @@ class MakeTransaction extends Command
         $update = $this->getUpdate();
         $keyboard = Keyboard::make()->inline()
         ->row(
-            Keyboard::inlineButton(['text' => 'Show your wallet', 'callback_data' => 'App\Commands\Cards']),
+            Keyboard::inlineButton(['text' => 'Show your wallet', 'callback_data' => 'cards']),
         );
 
         if (count($this->arguments) != 3) {

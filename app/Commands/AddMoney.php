@@ -13,7 +13,7 @@ class AddMoney extends Command
     /**
      * @var string Command Name
      */
-    protected $name = "balance";
+    protected $name = "addmoney";
 
     /** @var string Command Argument Pattern */
     protected $pattern = '{money} {card_id}';

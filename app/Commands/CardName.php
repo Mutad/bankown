@@ -43,11 +43,17 @@ class CardName extends Command
         //     Keyboard::inlineButton(['text' => 'back', 'callback_data' => 'App\Commands\Card '.$this->arguments[0]]),
         // );
 
-        Telegram::editMessageText([
+        $data = [
             'text'=>$text,
             'message_id'=> $this->getUpdate()->getMessage()['message_id'],
             'chat_id'=>$this->getUpdate()->getChat()['id'],
             // 'reply_markup'=> $keyboard
-        ]);
+        ];
+
+        if ($update->isType('callback_query') && $update->getMessage()['from']['is_bot']) {
+            Telegram::editMessageText($data);
+        } else {
+            Telegram::sendMessage($data);
+        }
     }
 }

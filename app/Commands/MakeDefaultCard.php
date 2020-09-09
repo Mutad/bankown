@@ -13,7 +13,7 @@ class MakeDefaultCard extends Command
     /**
      * @var string Command Name
      */
-    protected $name = "MakeDefaultCard";
+    protected $name = "makedefaultcard";
 
     protected $pattern = "{card_id}";
 

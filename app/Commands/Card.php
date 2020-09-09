@@ -40,24 +40,24 @@ class Card extends Command
             ."\n<b>Card Owner</b>: @".TelegramUser::find($update->getMessage()['chat']['id'])->username;
             $keyboard = Keyboard::make()->inline()
             ->row(
-                Keyboard::inlineButton(['text' => '💸Make transaction', 'callback_data' => 'App\Commands\MakeTransaction '.$card->id]),
+                Keyboard::inlineButton(['text' => '💸Make transaction', 'callback_data' => 'transaction '.$card->id]),
             )
             ->row(
-                Keyboard::inlineButton(['text' => '⚠️DEBUG: Add 100 USD', 'callback_data' => 'App\Commands\AddMoney 100 '.$card->id]),
+                Keyboard::inlineButton(['text' => '⚠️DEBUG: Add 100 USD', 'callback_data' => 'addmoney 100 '.$card->id]),
             )
             ->row(
-                Keyboard::inlineButton(['text' => '💅💅💅Show transactions💅💅💅', 'callback_data' => 'App\Commands\Transactions']),
+                Keyboard::inlineButton(['text' => '💅💅💅Show transactions💅💅💅', 'callback_data' => 'your_callback_data']),
             )
             ->row(
-                Keyboard::inlineButton(['text' => '🔤Change name', 'callback_data' => 'App\Commands\CardName '.$card->id]),
+                Keyboard::inlineButton(['text' => '🔤Change name', 'callback_data' => 'changecardname '.$card->id]),
             )
             ->row(
-                Keyboard::inlineButton(['text' => '⚙️Card Settings', 'callback_data' => 'App\Commands\CardSettings '.$card->id]),
+                Keyboard::inlineButton(['text' => '⚙️Card Settings', 'callback_data' => 'cardsettings '.$card->id]),
             );
         }
 
         $keyboard->row(
-            Keyboard::inlineButton(['text' => '🔙Back', 'callback_data' => 'App\Commands\Cards']),
+            Keyboard::inlineButton(['text' => '🔙Back', 'callback_data' => 'cards']),
         );
 
         $update = $this->getUpdate();

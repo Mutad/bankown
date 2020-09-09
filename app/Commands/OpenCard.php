@@ -47,8 +47,22 @@ class OpenCard extends Command
             Log::error($text. " ". $update);
         }
 
-        $this->replyWithMessage([
-            'text'=>$text
-        ]);
+        $keyboard = Keyboard::make()->inline()->row(
+           Keyboard::inlineButton([ 'text'=>'Back','callback_data'=>'cards'])
+        );
+
+        $data = [
+            'text'=>$text,
+            'parse_mode'=>'HTML',
+            'message_id'=> $this->getUpdate()->getMessage()['message_id'],
+            'chat_id'=>$this->getUpdate()->getChat()['id'],
+            'reply_markup'=> $keyboard
+        ];
+
+        if ($update->isType('callback_query') && $update->getMessage()['from']['is_bot']) {
+            Telegram::editMessageText($data);
+        } else {
+            Telegram::sendMessage($data);
+        }
     }
 }

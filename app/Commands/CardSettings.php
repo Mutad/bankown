@@ -43,14 +43,14 @@ class CardSettings extends Command
             ."\nDefault: ". ($user->default_card_id == $card->id?"Yes":"No");
             $keyboard = Keyboard::make()->inline()
             ->row(
-                Keyboard::inlineButton(['text' => 'Change name', 'callback_data' => 'App\Commands\CardName '.$card->id]),
+                Keyboard::inlineButton(['text' => 'Change name', 'callback_data' => 'changecardname '.$card->id]),
             )
             ->row(
-                Keyboard::inlineButton(['text' => ($user->default_card_id==$card->id?'✅':'').'Make default', 'callback_data' => 'App\Commands\MakeDefaultCard '.$card->id]),
+                Keyboard::inlineButton(['text' => ($user->default_card_id==$card->id?'✅':'').'Make default', 'callback_data' => 'makedefaultcard '.$card->id]),
             );
         }
         $keyboard->row(
-            Keyboard::inlineButton(['text' => 'Back', 'callback_data' => 'App\Commands\Card '.$card->id]),
+            Keyboard::inlineButton(['text' => 'Back', 'callback_data' => 'card '.$card->id]),
         );
 
         $update = $this->getUpdate();
@@ -63,7 +63,7 @@ class CardSettings extends Command
             'reply_markup'=> $keyboard
         ];
 
-        if ($update->isType('callback_query')) {
+        if ($update->isType('callback_query') && $update->getMessage()['from']['is_bot']) {
             Telegram::editMessageText($data);
         } else {
             Telegram::sendMessage($data);

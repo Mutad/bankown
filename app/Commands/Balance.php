@@ -27,27 +27,5 @@ class Balance extends Command
      */
     public function handle()
     {
-        $text = "Select your card";
-        $keyboard = Keyboard::make()->inline()
-        ->row(
-            Keyboard::inlineButton(['text' => 'Card 1', 'callback_data' => 'App\Commands\Balance 1']),
-        )
-        ->row(
-            Keyboard::inlineButton(['text' => 'back', 'callback_data' => 'App\Commands\Menu']),
-        );
-
-        if (isset($this->getArguments()[0])) {
-            $text = "your balance is 0, lmao";
-            $keyboard = Keyboard::make()->inline()->row(
-                Keyboard::inlineButton(['text' => 'back', 'callback_data' => 'App\Commands\Balance']),
-            );
-        }
-
-        Telegram::editMessageText([
-            'text'=>$text,
-            'message_id'=> $this->getUpdate()->getMessage()['message_id'],
-            'chat_id'=>$this->getUpdate()->getChat()['id'],
-            'reply_markup'=> $keyboard
-        ]);
     }
 }

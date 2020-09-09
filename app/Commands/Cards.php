@@ -39,7 +39,7 @@ class Cards extends Command
                     Keyboard::inlineButton(
                         ['text' => ($card->id == $user->default_card_id?'(default) ':''). $card->name.
                     ' - '. $card->balance.' '. $card->currency,
-                    'callback_data' => 'App\Commands\Card '.$card->id]
+                    'callback_data' => 'card '.$card->id]
                     ),
                 );
             }
@@ -47,20 +47,26 @@ class Cards extends Command
 
         $keyboard
         ->row(
-            Keyboard::inlineButton(['text' => 'Open new card', 'callback_data' => 'App\Commands\OpenCard']),
+            Keyboard::inlineButton(['text' => 'Open new card', 'callback_data' => 'opencard']),
         )
         ->row(
-            Keyboard::inlineButton(['text' => 'back', 'callback_data' => 'App\Commands\Menu']),
+            Keyboard::inlineButton(['text' => 'back', 'callback_data' => 'menu']),
         );
 
 
 
-        Telegram::editMessageText([
+        $data = [
             'text'=>$text,
             'parse_mode'=>"HTML",
             'message_id'=> $this->getUpdate()->getMessage()['message_id'],
             'chat_id'=>$this->getUpdate()->getChat()['id'],
             'reply_markup'=> $keyboard
-        ]);
+        ];
+
+        if ($update->isType('callback_query') && $update->getMessage()['from']['is_bot']) {
+            Telegram::editMessageText($data);
+        } else {
+            Telegram::sendMessage($data);
+        }
     }
 }
