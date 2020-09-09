@@ -19,20 +19,27 @@ class Start extends Command
      */
     protected $description = "Start bot";
 
+    protected $pattern = '{command}';
+
     /**
      * @inheritdoc
      */
     public function handle()
     {
         $response = $this->getUpdate();
-
-        $keyboard = Keyboard::make()->row(
-            Keyboard::inlineButton(['text' => '/menu']),
-        );
-
-        $this->replyWithMessage([
-            'text' => 'Hello, '.$this->getUpdate()->getMessage()['from']['first_name'],
-            'reply_markup' => $keyboard
-        ]);
+        
+        if (isset($this->arguments['command'])) {
+            $this->triggerCommand($this->arguments['command']);
+        } else {
+            $keyboard = Keyboard::make()->row(
+                Keyboard::inlineButton(['text' => '/menu']),
+            );
+            
+            
+            $this->replyWithMessage([
+                'text' => 'Hello, '.$this->getUpdate()->getMessage()['from']['first_name'],
+                'reply_markup' => $keyboard
+                ]);
+        }
     }
 }

@@ -8,6 +8,10 @@ use App\TelegramUser;
 use Log;
 use Telegram\Bot\Keyboard\Keyboard;
 use App\Card;
+use Illuminate\Support\Str;
+
+use Telegram\Bot\Objects\InlineQuery\InlineQueryResultArticle;
+use Telegram\Bot\Objects\InputContent\InputTextMessageContent;
 
 class WebhookController extends Controller
 {
@@ -16,11 +20,16 @@ class WebhookController extends Controller
         try {
             $update = Telegram::commandsHandler(true);
             $telegram = new \Telegram\Bot\Api;
+            
+            if (isset($update['inline_query'])) {
+                $this->processInlineQuery($update);
+                return;
+            }
 
-            Log::debug('Incomming '.$update->detectType().' from '.$update->getMessage()['from']['username'].' in chat w/ '.$update->getMessage()['chat']['username']."\n".$update->getMessage()['text']);
+            Log::info('Incomming '.$update->detectType().' from '.$update->getMessage()['from']['username']);
 
             if (isset($update['message']) && !TelegramUser::find($update['message']['from']['id'])) {
-                Log::debug('New user start '.json_encode($update['message']['from']));
+                Log::info('New user start '.json_encode($update['message']['from']));
                 TelegramUser::create($update['message']['from']);
             }
 
@@ -50,16 +59,21 @@ class WebhookController extends Controller
                 // $message_update['message']['entities'][0] = ['offset'=>0,'length'=>strlen($callback_data),'type'=>'bot_command'];
                 // $update['callback_query'] = $message_update;
                 // $update['callback_query']['message']['entities'][0] = ['offset'=>0,'length'=>strlen($callback_data),'type'=>'bot_command'];
-                $this->triggerCommand($callback_data,$update);
+                $this->triggerCommand($callback_data, $update);
 
                 break;
+            case 'chosen_inline_result':
+                $result = $update['chosen_inline_result'];
+                $this->triggerCommand('transaction '.$result['result_id'].' '.$result['query'],$update);
+            break;
         }
         } catch (\Throwable $th) {
             Log::error($th);
         }
     }
 
-    private function triggerCommand($command,$update){
+    private function triggerCommand($command, $update)
+    {
         $telegram = new \Telegram\Bot\Api;
         $telegram->getCommandBus()->execute($command, $update, ['offset'=>0,'length'=>strlen($command),'type'=>'bot_command']);
     }
@@ -127,5 +141,98 @@ class WebhookController extends Controller
         //         # code...
         //         break;
         // }
+    }
+
+    private function processInlineQuery($update)
+    {
+        $telegram = new \Telegram\Bot\Api;
+
+        $inlineQuery = $update['inline_query'];
+        $user = TelegramUser::find($inlineQuery['from']['id']);
+        $inlineQueryResultArticles = [];
+        $answer = [
+            'cache_time' => '1',
+            'inline_query_id' => $update->inline_query->id,
+        ];
+        if (count($user->cards) == 0) {
+            $answer['switch_pm_text'] = "You have no cards. Open one right now.";
+            $answer['switch_pm_parameter'] = "opencard";
+        }
+
+        if ($inlineQuery['query'] == '' || !isset($inlineQuery['query'])) {
+            array_push(
+                $inlineQueryResultArticles,
+                new InlineQueryResultArticle(
+                    [
+                    'id' => '123',
+                    'title' => 'Enter recipient username or card id',
+                    'description'=>'(username) (money)',
+                    'input_message_content' => new InputTextMessageContent([
+                        'message_text' => 'Provide valid data to make request',
+                    ]),
+                ]
+                )
+            );
+        } else {
+            $params = explode(' ', $inlineQuery['query']);
+
+            switch (count($params)) {
+                case 1:
+                    array_push(
+                        $inlineQueryResultArticles,
+                        new InlineQueryResultArticle(
+                            [
+                            'id' => '123',
+                            'title' => 'Enter amount of money to transfer to '.$params[0],
+                            'description'=>'(money)',
+                            'input_message_content' => new InputTextMessageContent([
+                                'message_text' => 'Provide valid data to make request',
+                            ]),
+                        ]
+                        )
+                    );
+                    break;
+                    case 2:
+                    foreach ($user->cards as $key => $card) {
+                        array_push($inlineQueryResultArticles, new InlineQueryResultArticle(
+                            [
+                            'id' => $card->id,
+                            'thumb_url'=>'https://img.icons8.com/ios/100/000000/money-transfer.png',
+                            'title' => $card->name. ' '.$card->getBalance(),
+                            'description'=>'Transfer from '. $card->name . ' to '.$params[0],
+                            'input_message_content' => new InputTextMessageContent([
+                                'message_text' => 'Transfer '.$params[1]. ' '. $card->currency .' to '.$params[0]. "\nYour transaction is now processing\nTransaction key:".Str::uuid(),
+                            ]),
+                        ]
+                        ));
+                    }
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+        }
+
+
+        
+        // new InlineQueryResultArticle([
+        //     'id' => 123,
+        //     'thumb_url'=>'https://img.icons8.com/ios/100/000000/money-transfer.png',
+        //     'title' => 'test title 1',
+        //     'input_message_content' => new InputTextMessageContent([
+        //         'message_text' => 'test content 1',
+        //     ]),
+        //     'description'=>'desc'
+        // ]),
+        // new InlineQueryResultArticle([
+        //     'id' => 456,
+        //     'title' => 'test title 2',
+        //     'input_message_content' => new InputTextMessageContent([
+        //         'message_text' => 'test content 2',
+        //     ])
+        // ])
+        $answer['results'] = json_encode($inlineQueryResultArticles);
+        $result = $telegram->answerInlineQuery($answer);
     }
 }

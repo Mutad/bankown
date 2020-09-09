@@ -24,6 +24,8 @@ class MakeTransaction extends Command
      */
     protected $description = "Make transaction";
 
+    private $success = false;
+
     /**
      * @inheritdoc
      */
@@ -48,19 +50,31 @@ class MakeTransaction extends Command
 
 
         $update = $this->getUpdate();
-        $user = TelegramUser::find($update->getMessage()['chat']['id']);
+
+        if (isset($update->getMessage()['chat'])) {
+            $user = TelegramUser::find($update->getMessage()['chat']['id']);
+        } else {
+            $user = TelegramUser::find($update->getMessage()['from']['id']);
+        }
+
         $keyboard = Keyboard::make()->inline();
 
-        $data = [
+        if ($update->detectType() == 'chosen_inline_result') {
+            $data = [
+                'text'=>"No info",
+                'parse_mode'=>'HTML',
+                'chat_id'=>$this->getUpdate()->getMessage()['from']['id'],
+                'reply_markup'=> $keyboard
+            ];
+        } else {
+            $data = [
             'text'=>"No info",
             'parse_mode'=>'HTML',
             'message_id'=> $this->getUpdate()->getMessage()['message_id'],
             'chat_id'=>$this->getUpdate()->getChat()['id'],
             'reply_markup'=> $keyboard
         ];
-
-        Log::debug(print_r($this->getArguments(), true));
-
+        }
 
         if (count($this->arguments) == 0) {
             $data['text'] = "Command usage\n<code>/transaction (your card number) (recipient's card number) (money)\n\n/transaction (your card number) (recipient's username) (money)</code>";
@@ -89,6 +103,8 @@ class MakeTransaction extends Command
                 // Cannot find sender's card
                 $data['text'] = "🙁Your card not found";
                 Log::error('Card not found. '. $update);
+            } elseif (!$user->cards->contains($card)) {
+                $data['text'] = '👮‍♀️You cannot transfer money from someone else\'s card';
             } elseif ($card->balance < $this->arguments['money']) {
                 // Not enough money
                 $data['text'] = "😭Net enough money to complete transaction\nYour balance: ".$card->getBalance();
@@ -113,7 +129,7 @@ class MakeTransaction extends Command
                             $data['text'] = "😕This recipient have no available cards";
                         } else {
                             $recipient_card = $recipient->cards[0];
-                            $data = $this->sendTransaction($card, $recipient_card);
+                            $data['text'] = $this->sendTransaction($card, $recipient_card);
                         }
                     } else {
                         // Default card is set
@@ -123,7 +139,7 @@ class MakeTransaction extends Command
                             $data['text'] = "😕Recipient card not found";
                             Log::error('Card not found. '. $update);
                         } else {
-                            $data = $this->sendTransaction($card, $recipient_card);
+                            $data['text'] = $this->sendTransaction($card, $recipient_card);
                         }
                     }
                 }
@@ -131,16 +147,14 @@ class MakeTransaction extends Command
                 // Found recipient by card id
                 // All arguments are valid
                 // Sending transaction
-                $data = $this->sendTransaction($card, $recipient_card);
+                $data['text'] = $this->sendTransaction($card, $recipient_card);
             }
         }
 
         $keyboard->row(
-            Keyboard::inlineButton(['text' => 'Cancel', 'callback_data' => 'cards']),
+            Keyboard::inlineButton(['text' => $this->success?'Cards':'Wallet', 'callback_data' => 'cards']),
         );
 
-        
-        Log::debug(print_r($data, true));
         if ($update->isType('callback_query') && $update->getMessage()['from']['is_bot']) {
             Telegram::editMessageText($data);
         } else {
@@ -150,25 +164,27 @@ class MakeTransaction extends Command
 
     public function sendTransaction($card, $recipient_card)
     {
-        $keyboard = Keyboard::make()->inline()
-        ->row(
-            Keyboard::inlineButton(['text' => 'Show your wallet', 'callback_data' => 'cards']),
-        );
+        $update = $this->getUpdate();
         $data = [
                 'text'=>"No info provided",
                 'parse_mode'=>'HTML',
-                'message_id'=> $this->getUpdate()->getMessage()['message_id'],
-                'chat_id'=>$this->getUpdate()->getChat()['id'],
-                'reply_markup'=>$keyboard
+                'chat_id'=>$this->getUpdate()->getMessage()['from']['id']
             ];
             
         if ($card == $recipient_card) {
-            $data['text'] = "😁You cant make transaction to same card";
+            $text = "😁You cant make transaction to same card";
         } else {
             $card->balance -= $this->arguments['money'];
             $card->save();
             $recipient_card->balance += $this->arguments['money'];
             $recipient_card->save();
+
+            if (!$recipient_card->owner->contacts->contains($card->owner)) {
+                $recipient_card->owner->contacts()->save($card->owner);
+            }
+            if (!$card->owner->contacts->contains($recipient_card->owner)) {
+                $card->owner->contacts()->save($recipient_card->owner);
+            }
 
             $text = "<b>The transfer was successful!</b>";
             $infotext = "💸Money transfer from @".$card->owner->username.' to @'.$recipient_card->owner->username.
@@ -177,13 +193,21 @@ class MakeTransaction extends Command
             $recipient_data = [
                 'text'=>$infotext."\nCard balance: ".$recipient_card->getBalance(),
                 'parse_mode'=>'HTML',
-                'chat_id'=>$recipient_card->owner->id,
-                'reply_markup'=>$keyboard
+                'chat_id'=>$recipient_card->owner->id
             ];
             Telegram::sendMessage($recipient_data);
             $data['text'] = $text ."\n". $infotext. "\nCard balance: ".$card->getBalance();
+            $card->owner->state = null;
+            $card->owner->save();
+            $text = "🤑<b>Your transaction was successful</b>";
+            $this->success = true;
         }
         
-        return $data;
+        if ($update->isType('callback_query') && $update->getMessage()['from']['is_bot']) {
+            Telegram::editMessageText($data);
+        } else {
+            Telegram::sendMessage($data);
+        }
+        return $text;
     }
 }
