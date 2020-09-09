@@ -5,18 +5,22 @@ namespace App\Commands;
 use Telegram;
 use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Commands\Command;
+use App\Card as CardObject;
+use App\TelegramUser;
+use DB;
+use Log;
 
-class Menu extends Command
+class Status extends Command
 {
     /**
      * @var string Command Name
      */
-    protected $name = "menu";
+    protected $name = "status";
 
     /**
      * @var string Command Description
      */
-    protected $description = "Open main menu";
+    protected $description = "Change settings";
 
     /**
      * @inheritdoc
@@ -24,22 +28,22 @@ class Menu extends Command
     public function handle()
     {
         $update = $this->getUpdate();
+        if (DB::connection()){
+            $text = "✅200 OK";
+        }
+        else{
+            $text = "❗️Database connection could not be enstablished 500";
+        }
+        $text .= "\nversion 0.1";
+        $keyboard = Keyboard::make()->inline();
 
-        $user = TelegramUser::find($update->getMessage()['chat']['id']);
-        $user->state = null;
-        $user->save();
-        
-        $keyboard = Keyboard::make()->inline()
-        ->row(
-            Keyboard::inlineButton(['text' => '💳Select card', 'callback_data' => 'cards']),
-        )->row(
-            Keyboard::inlineButton(['text' => '⚙️Settings', 'callback_data' => 'settings']),
-        )->row(
-            Keyboard::inlineButton(['text' => 'ℹ️Status', 'callback_data' => 'status']),
+        $keyboard->row(
+            Keyboard::inlineButton(['text' => 'Back', 'callback_data' => 'menu']),
         );
 
         $data = [
-            'text'=>'Menu',
+            'text'=>$text,
+            'parse_mode'=>'HTML',
             'message_id'=> $this->getUpdate()->getMessage()['message_id'],
             'chat_id'=>$this->getUpdate()->getChat()['id'],
             'reply_markup'=> $keyboard

@@ -31,6 +31,8 @@ class Cards extends Command
         $keyboard = Keyboard::make()->inline();
 
         if ($user = TelegramUser::find($update->getMessage()['chat']['id'])) {
+            $user->state = null;
+            $user->save();
             if (!$user->default_card_id){
                 $text .= "\n<b>⚠️ Your default card is not set, you cannot receive transactions. To make a default card go to card settings</b>";
             }

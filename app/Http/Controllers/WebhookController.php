@@ -92,23 +92,17 @@ class WebhookController extends Controller
                         $card = Card::find($state_args[0]);
                         $card->name = $update->getMessage()['text'];
                         $card->save();
-
-
-
                         $telegram->getCommandBus()->execute('card '.$state_args[0], $update, []);
                         break;
                     case 'transaction':
                         $txt = $user->state.' '.$update->getMessage()['text'];
                         $telegram->getCommandBus()->execute($user->state.' '.$update->getMessage()['text'], $update, ['offset'=>0,'length'=>strlen($txt)]);
-                        // Telegram::triggerCommand($user->state.' '.$update->getMessage()['text'],$update);
                     break;
 
                     default:
                         # code...
                         break;
                 }
-                $user->state = null;
-                Log::info('set state to null');
                 $user->save();
             }
         }

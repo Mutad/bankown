@@ -52,6 +52,8 @@ return [
                 App\Commands\OpenCard::class,
                 App\Commands\AddMoney::class,
                 App\Commands\Placeholder::class,
+                App\Commands\Settings::class,
+                App\Commands\Status::class,
             ],
         ],
 

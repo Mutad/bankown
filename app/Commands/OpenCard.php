@@ -46,23 +46,21 @@ class OpenCard extends Command
             $text = "User not found";
             Log::error($text. " ". $update);
         }
+        // $data = [
+        //     'text'=>$text,
+        //     'parse_mode'=>'HTML',
+        //     'message_id'=> $this->getUpdate()->getMessage()['message_id'],
+        //     'chat_id'=>$this->getUpdate()->getChat()['id'],
+        //     'reply_markup'=> $keyboard
+        // ];
 
-        $keyboard = Keyboard::make()->inline()->row(
-           Keyboard::inlineButton([ 'text'=>'Back','callback_data'=>'cards'])
-        );
+        // if ($update->isType('callback_query') && $update->getMessage()['from']['is_bot']) {
+        //     Telegram::editMessageText($data);
+        // } else {
+        //     Telegram::sendMessage($data);
+        // }
 
-        $data = [
-            'text'=>$text,
-            'parse_mode'=>'HTML',
-            'message_id'=> $this->getUpdate()->getMessage()['message_id'],
-            'chat_id'=>$this->getUpdate()->getChat()['id'],
-            'reply_markup'=> $keyboard
-        ];
+        $this->triggerCommand('cards');
 
-        if ($update->isType('callback_query') && $update->getMessage()['from']['is_bot']) {
-            Telegram::editMessageText($data);
-        } else {
-            Telegram::sendMessage($data);
-        }
     }
 }
