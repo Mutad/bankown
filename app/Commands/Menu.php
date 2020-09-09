@@ -5,6 +5,7 @@ namespace App\Commands;
 use Telegram;
 use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Commands\Command;
+use App\TelegramUser;
 
 class Menu extends Command
 {

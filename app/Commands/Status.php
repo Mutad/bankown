@@ -34,7 +34,7 @@ class Status extends Command
         else{
             $text = "❗️Database connection could not be enstablished 500";
         }
-        $text .= "\nversion 0.1";
+        $text .= "\nversion ".trim(exec('git describe'));
         $keyboard = Keyboard::make()->inline();
 
         $keyboard->row(
