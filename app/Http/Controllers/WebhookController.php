@@ -20,6 +20,8 @@ class WebhookController extends Controller
         try {
             $update = Telegram::commandsHandler(true);
             $telegram = new \Telegram\Bot\Api;
+
+            Log::debug($update);
             
             if (isset($update['inline_query'])) {
                 $this->processInlineQuery($update);
@@ -64,7 +66,7 @@ class WebhookController extends Controller
                 break;
             case 'chosen_inline_result':
                 $result = $update['chosen_inline_result'];
-                $this->triggerCommand('transaction '.$result['result_id'].' '.$result['query'],$update);
+                $this->triggerCommand('transaction '.$result['result_id'].' '.$result['query'], $update);
             break;
         }
         } catch (\Throwable $th) {
@@ -166,6 +168,7 @@ class WebhookController extends Controller
                     [
                     'id' => '123',
                     'title' => 'Enter recipient username or card id',
+                    'thumb_url'=>'https://mutad.ml/logo.png',
                     'description'=>'(username) (money)',
                     'input_message_content' => new InputTextMessageContent([
                         'message_text' => 'Provide valid data to make request',
@@ -184,6 +187,7 @@ class WebhookController extends Controller
                             [
                             'id' => '123',
                             'title' => 'Enter amount of money to transfer to '.$params[0],
+                            'thumb_url'=>'https://mutad.ml/logo.png',
                             'description'=>'(money)',
                             'input_message_content' => new InputTextMessageContent([
                                 'message_text' => 'Provide valid data to make request',

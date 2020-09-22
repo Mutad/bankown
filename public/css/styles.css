@@ -1,0 +1,131 @@
+/* CSS HEX */
+
+:root {
+  --background-primary: white;
+  --background-secondary: #f5f5f7;
+  --color-primary: black;
+  --color-secondary: #232323;
+  --nav-color:#f5f5f7;
+  --nav-background:rgba(0,0,0,0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --russian-violet: #0c0032ff;
+    --navy-blue: #190061ff;
+    --duke-blue: #240090ff;
+    --medium-blue: #3500d3ff;
+    --eerie-black: #282828ff;
+    --background-primary: black;
+    --background-secondary: #232323;
+    --color-primary: white;
+    --color-secondary: #f5f5f7;
+  }
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--background-primary);
+  color: var(--color-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+
+.welcome {
+  min-height: 100%;
+}
+
+nav {
+  background-color: var(--nav-background);
+  color: var(--nav-color);
+}
+
+nav ul a {
+  font-size: 14px;
+  opacity: .8;
+  color: inherit;
+  transition: 0.3s opacity ease;
+  font-weight: 400;
+  font-family: "SF Pro Text", "Myriad Set Pro", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+
+body>nav ul img.logo {
+  height: 30px;
+  filter: invert(1);
+}
+
+nav ul a:hover {
+  color: inherit;
+  text-decoration: none;
+  opacity: 1;
+}
+
+nav ul a.active {
+  opacity: .56;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+body>.content{
+  background-color: var(--background-primary);
+  color: var(--color-primary);
+}
+
+footer {
+  padding: 10px 0;
+}
+
+footer ul {
+  list-style-type: none;
+  padding: 0;
+  text-align: center;
+}
+
+.theme-fig-right .logo{
+  width: 50%;
+}
+
+.wrapper{
+  display: flex;
+}
+
+.wrapper.theme-fig-right{
+  flex-wrap: wrap-reverse;
+  justify-content: center;
+  align-items: center;
+}
+
+.module-content{
+  padding: 10px;
+  margin: 10px;
+  background-color: var(--background-secondary);
+  width: 100%;
+}
+
+.module-content>.placeholder{
+  min-height: 5cm;
+  text-align: center;
+}
+
+.module-content .theme-fig-right>div{
+  margin-right: 10px;
+}
+
+.logo-text{
+  font-variant: small-caps;
+  text-decoration: underline;
+}
+
+h1 + h3{
+  color: var(--color-secondary);
+}
+
+.btn-outline{
+  border-color: var(--color-secondary);
+}
+
+.headline{
+}

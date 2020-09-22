@@ -19,7 +19,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/bot/getupdates', function() {
-    $updates = Telegram::getWebhookInfo();
-    return (json_encode($updates));
+Route::get('/apps', function () {
+    return view('apps.index');
+});
+
+Route::get('/bankown', function () {
+    return view('apps.bankown');
 });

@@ -7,6 +7,8 @@ use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Commands\Command;
 use App\TelegramUser;
 
+use Log;
+
 class Menu extends Command
 {
     /**
@@ -26,9 +28,11 @@ class Menu extends Command
     {
         $update = $this->getUpdate();
 
-        $user = TelegramUser::find($update->getMessage()['chat']['id']);
-        $user->state = null;
-        $user->save();
+        Log::debug($update);
+        if ($user = TelegramUser::find($update->getMessage()['from']['id'])) {
+            $user->state = null;
+            $user->save();
+        }
         
         $keyboard = Keyboard::make()->inline()
         ->row(
