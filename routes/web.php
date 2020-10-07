@@ -19,10 +19,26 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::group(['prefix' => '/hub'], function () {
+    Route::get('', function () {
+        return view('pages.hub.index');
+    });
+});
+
+
 Route::get('/apps', function () {
     return view('apps.index');
 });
 
 Route::get('/bankown', function () {
     return view('apps.bankown');
+});
+
+Route::group(['prefix' => 'legal'], function () {
+    Route::get('terms', function () {
+        return view('pages.legal.terms');
+    });
+    Route::get('privacy', function () {
+        return view('pages.legal.privacy');
+    });
 });

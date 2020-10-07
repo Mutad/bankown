@@ -1,19 +1,18 @@
 @extends('app')
 
-@section('body')
+@section('content')
 
-<div class="content d-flex justify-content-center align-items-center text-center flex-column">
-    {{$error_code}}
-    @switch($error_code)
-    @case(404)
-    <p>The page you are looking for does not exist</p>
-    @break
-    @case(2)
 
-    @break
-    @default
+@switch($error_code)
+@case(404)
+<h1>The page you’re looking for can’t be found.</h1>
+<h5><a href="/hub" class="more">Go to hub</a></h5>
+@break
+@case(2)
+@break
+@default
 
-    @endswitch
+@endswitch
 
-</div>
+
 @endsection

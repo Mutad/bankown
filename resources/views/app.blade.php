@@ -13,11 +13,14 @@
     {{-- <link rel="icon" type="image/png" href="https://example.com/favicon.png"/> --}}
 </head>
 
-<body>
+<body class="d-flex flex-column">
     {{-- @include('partials.header') --}}
-
-    @section('body')
-    @show
+    @include('partials.header')
+    <div class="content d-flex flex-column align-items-center justify-content-center">
+        @section('content')
+        @show
+    </div>
+    @include('partials.footer')
     <script src="{{asset('js/app.js')}}"></script>
 </body>
 
