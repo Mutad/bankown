@@ -255,7 +255,8 @@ div.error {
     margin: 10px 0;
 }
 
-.btn {
+.btn,
+.alert {
     border-radius: 0.8rem;
 }
 

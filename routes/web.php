@@ -48,6 +48,8 @@ Route::group(['prefix' => '/auth'], function () {
         return view('pages.auth.login');
     })->name('login');
 
+    Route::post('login', 'Auth\LoginController@login')->name('login');
+
     Route::get('register', 'Auth\RegisterController@create')->name('register');
 
     Route::post('register', 'Auth\RegisterController@store')->name('register');
