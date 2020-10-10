@@ -52,6 +52,7 @@ nav ul a {
     opacity: .8;
     color: inherit;
     transition: 0.3s opacity ease;
+    padding: 5px;
     font-weight: 400;
     font-family: "SF Pro Text", "Myriad Set Pro", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }

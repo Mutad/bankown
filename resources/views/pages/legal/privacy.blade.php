@@ -299,8 +299,8 @@
             <p>By email: mutado.nzr@gmail.com</p>
         </li>
         <li>
-            <p>By visiting this page on our website: <a href="https://www.mutad.ml/contact"
-                    rel="external nofollow noopener" target="_blank">https://www.mutad.ml/contact</a></p>
+        <p>By visiting this page on our website: <a href="{{route('contact',app()->getLocale())}}"
+                    rel="external nofollow noopener" target="_blank">{{route('contact',app()->getLocale())}}</a></p>
         </li>
     </ul>
 </div>

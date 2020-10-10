@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col-lg login">
             <h1 class="align-self-start">Please sign in</h1>
-            <form method="POST" action="{{route('login')}}">
+            <form method="POST" action="{{route('auth.login',app()->getLocale())}}">
                 @csrf
                 <div class="form-group">
                     <input class="form-control" type="email" name="email" id="input-email" placeholder="Your email">
@@ -37,15 +37,15 @@
                 @if ($errors->has('result'))
                 <div class="alert alert-danger" role="alert">
                     {{$errors->first('result')}}
-                  </div>
+                </div>
                 @endif
                 <input type="submit" class="btn btn-primary btn-block" value="Submit">
             </form>
             <div>
-                <a href="/auth/forgot">Forgot your login or password?</a>
+            <a href="{{route('auth.forgot',app()->getLocale())}}">Forgot your login or password?</a>
             </div>
             <div>
-                <a href="/auth/register">Dont have an account? Create one now.</a>
+                <a href="{{route('auth.register',app()->getLocale())}}">Dont have an account? Create one now.</a>
             </div>
         </div>
         <div class="col-sm">

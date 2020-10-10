@@ -15,42 +15,62 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/{token}/webhook', 'WebhookController@hook');
 
+
+Route::group(
+    ['prefix' => '{locale}',
+    'where' => ['locale' => '[a-zA-Z]{2}'],
+    'middleware'=>'locale'],
+    function () {
+        Route::get('/', function () {
+            return view('welcome');
+        })->name('welcome');
+
+
+          
+        Route::group(['prefix' => '/hub','middleware' => ['auth']], function () {
+            Route::get('/', function () {
+                return view('pages.hub.index');
+            })->name('hub');
+        });
+
+        Route::group(['prefix' => '/legal'], function () {
+            Route::get('terms', function () {
+                return view('pages.legal.terms');
+            })->name('terms_of_use');
+            Route::get('privacy', function () {
+                return view('pages.legal.privacy');
+            })->name('privacy_policy');
+        });
+        
+        Route::group(['prefix' => '/auth','as'=>'auth.'], function () {
+            Route::get('login', 'Auth\LoginController@show')->name('login');
+        
+            Route::post('login', 'Auth\LoginController@login');
+        
+            Route::get('register', 'Auth\RegisterController@create')->name('register');
+        
+            Route::post('register', 'Auth\RegisterController@store');
+            Route::post('forgot', 'Auth\LoginController@forgot')->name('forgot');
+        });
+        
+        Route::get('contact', function () {
+            return redirect('/');
+        })->name('contact');
+    }
+);
+
 Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::group(['prefix' => '/hub','middleware' => ['auth']], function () {
-    Route::get('', function () {
-        return view('pages.hub.index');
-    });
+    return redirect(app()->getLocale());
 });
 
 
-Route::get('/apps', function () {
-    return view('apps.index');
-});
 
-Route::get('/bankown', function () {
-    return view('apps.bankown');
-});
 
-Route::group(['prefix' => '/legal'], function () {
-    Route::get('terms', function () {
-        return view('pages.legal.terms');
-    });
-    Route::get('privacy', function () {
-        return view('pages.legal.privacy');
-    });
-});
+// Route::get('/apps', function () {
+//     return view('apps.index');
+// });
 
-Route::group(['prefix' => '/auth'], function () {
-    Route::get('login', function () {
-        return view('pages.auth.login');
-    })->name('login');
+// Route::get('/bankown', function () {
+//     return view('apps.bankown');
+// });
 
-    Route::post('login', 'Auth\LoginController@login')->name('login');
-
-    Route::get('register', 'Auth\RegisterController@create')->name('register');
-
-    Route::post('register', 'Auth\RegisterController@store')->name('register');
-});
