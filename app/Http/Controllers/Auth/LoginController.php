@@ -6,24 +6,36 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use Log;
+use \App\Http\Requests\LoginRequest;
+
 
 class LoginController extends Controller
 {
-    public function login(Request $request)
+    public function show()
     {
-        $this->validate($request, [
-            'email'=>'required|string|email',
-            'password'=>'required|string',
-        ]);
+        return view('pages.auth.login');
+    }
 
-        $credentials = $request->only('email', 'password');
+    public function login(LoginRequest $requestFields)
+    {
+        // $validator = $this->validate($request, [
+        //     'email'=>'required|string|email',
+        //     'password'=>'required|string',
+        // ]);
 
-        if (Auth::attempt($credentials)) {
-            // Authentication passed...
-            Log::info('authenticated');
-            return redirect()->intended('hub');
+        $attributes = $requestFields->only(['email', 'password']);
+        // dd($attributes);
+        if (Auth::attempt($attributes)) {
+            return redirect()->route('hub');
         }
 
         return redirect()->back()->withErrors(['result'=>'You entered wrong login or password'])->withInput();
+    }
+
+    public function logout()
+    {
+        Session::flush();
+        Auth::logout();
+        return back();
     }
 }
