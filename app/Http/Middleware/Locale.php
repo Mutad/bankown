@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App;
 
 class Locale
 {
@@ -15,7 +16,12 @@ class Locale
      */
     public function handle($request, Closure $next)
     {
-        app()->setLocale($request->segment(1));
+        if (session()->has('locale')) {
+            App::setLocale(session()->get('locale'));
+        } else {
+            App::setLocale('en');
+            session()->put('locale', 'en');
+        }
         return $next($request);
     }
 }
