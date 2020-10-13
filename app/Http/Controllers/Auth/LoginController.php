@@ -25,8 +25,8 @@ class LoginController extends Controller
 
         $attributes = $requestFields->only(['email', 'password']);
         // dd($attributes);
-        if (Auth::attempt($attributes)) {
-            return redirect()->route('hub');
+        if (Auth::attempt($attributes,true)) {
+            return redirect()->route('hub.main');
         }
 
         return redirect()->back()->withErrors(['result'=>'You entered wrong login or password'])->withInput();

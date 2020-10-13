@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Card extends Model
 {
     protected $fillable = [
-        'name','telegram_user_id','balance','currency'
+        'name','telegram_user_id','balance','currency','type'
     ];
 
     public function owner()

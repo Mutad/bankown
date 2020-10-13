@@ -48,7 +48,6 @@ class RegisterController extends Controller
         //  ]);
         // User::create($requestFields);
         $user = $this->registerUser($requestFields);
-
-         return redirect('/auth/login');
+         return redirect()->route('hub.main');
     }
 }

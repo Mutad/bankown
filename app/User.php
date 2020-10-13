@@ -37,4 +37,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'birth_date' => 'datetime',
     ];
+
+    public function full_name(){
+        return $this->attributes['first_name'] . ' ' . $this->attributes['last_name'];
+    }
+
+    public function cards()
+    {
+        return $this->hasMany('App\Card', 'user_id', 'id');
+    }
 }

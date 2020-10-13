@@ -12,6 +12,7 @@ class TelegramUser extends Model
 
    public function cards()
    {
+       return null;
        return $this->hasMany('App\Card', 'telegram_user_id', 'id');
    }
 
