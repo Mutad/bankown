@@ -15,11 +15,11 @@
     <div class="text-center">
         <h1>Create your account</h1>
         <div>
-        <a href="{{route('auth.login',app()->getLocale())}}">Already have an account? Find it here.</a>
+        <a href="{{route('auth.login')}}">Already have an account? Find it here.</a>
         </div>
         <hr>
     </div>
-    <form method="POST" action="{{route('auth.register',app()->getLocale())}}" class="d-flex flex-column align-items-center">
+    <form method="POST" action="{{route('auth.register')}}" class="d-flex flex-column align-items-center">
         @csrf
 
         {{-- Name --}}
@@ -129,7 +129,7 @@
     <small>
 
         Your data is stored on our server for your security, support and comfort.
-        <a href="{{route('privacy_policy',app()->getLocale())}}">See how your data is managed</a>
+        <a href="{{route('privacy_policy')}}">See how your data is managed</a>
     </small>
 </div>
 </div>

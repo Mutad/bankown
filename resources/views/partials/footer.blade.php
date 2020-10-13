@@ -38,8 +38,8 @@
         <div class="d-flex justify-content-between flex-responsive">
             <p>Copyright © 2020 Bankown. All rights reserved.</p>
             <ul class="links-legal d-flex flex-row mx-2">
-                <li><a href="{{route('privacy_policy',app()->getLocale())}}">Privacy Policy</a></li>
-                <li><a href="{{route('terms_of_use',app()->getLocale())}}">Terms of Use</a></li>
+                <li><a href="{{route('privacy_policy')}}">Privacy Policy</a></li>
+                <li><a href="{{route('terms_of_use')}}">Terms of Use</a></li>
             </ul>
         </div>
     </div>
