@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Card extends Model
 {
     protected $fillable = [
-        'name','telegram_user_id','balance','currency','type'
+        'name','balance','currency','user_id','type','number'
     ];
 
     public function owner()
     {
-        return $this->hasOne('App\TelegramUser', 'id', 'telegram_user_id');
+        return $this->hasOne('App\User', 'id', 'user_id');
     }
 
     public function getBalance(){
