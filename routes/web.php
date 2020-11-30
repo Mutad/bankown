@@ -25,10 +25,11 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-Route::group(['prefix' => '/hub','middleware' => ['auth'],'as'=>'hub.'], function () {
-    Route::get('/', function () {
-        return view('pages.hub.index');
-    })->name('main');
+Route::group(['prefix' => '/hub','as'=>'hub.'], function () {
+    Route::get('/{any?}', function () {
+        // return view('pages.hub.index');
+        return view('pages.spa');
+    })->name('main')->where('any', '.*');
 
     Route::get('/card/{card}', 'CardController@show')->name('card.single');
 });
@@ -43,14 +44,20 @@ Route::group(['prefix' => '/legal'], function () {
 });
 
 Route::group(['prefix' => '/auth','as'=>'auth.'], function () {
-    Route::get('login', 'Auth\LoginController@show')->name('login');
+    // Route::get('login', 'Auth\LoginController@show')->name('login');
     
-    Route::post('login', 'Auth\LoginController@login');
+    // Route::post('login', 'Auth\LoginController@login');
     
-    Route::get('register', 'Auth\RegisterController@create')->name('register');
+    // Route::get('register', 'Auth\RegisterController@create')->name('register');
     
-    Route::post('register', 'Auth\RegisterController@store');
-    Route::post('forgot', 'Auth\LoginController@forgot')->name('forgot');
+    // Route::post('register', 'Auth\RegisterController@store');
+    // Route::post('forgot', 'Auth\LoginController@forgot')->name('forgot');
+
+    // Route::get('logout', 'Auth\LoginController@logout')->name('logout');
+
+    Route::get('/{any?}', function ($id) {
+        return view('pages.spa');
+    })->where('any','.*');
 });
 
 Route::get('contact', function () {
