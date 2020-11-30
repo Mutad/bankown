@@ -26,7 +26,7 @@ class AddUserState extends Migration
     public function down()
     {
         Schema::table('telegram_users', function (Blueprint $table) {
-            $talbe->dropColumn('state');
+            $table->dropColumn('state');
         });
     }
 }
