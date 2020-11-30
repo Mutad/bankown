@@ -14,6 +14,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::group(['middleware' => ['auth:api']], function () {
+    Route::get('auth/user', function (Request $request) {
+        return response()->json($request->user(), 200);
+    });
+    Route::resource('user', 'Api\UserController');
+    Route::resource('card', 'Api\CardController')->except(['create','edit']);
+    Route::get('card/info/{number}','Api\CardController@showByNumber');
+    Route::post('transaction','Api\TransactionController@createTransaction');
 });
+
+Route::get('status', function () {
+    return response()->json(['message'=>'ok'], 200);
+});
+Route::post('auth/login', 'Auth\LoginController@login');
+Route::post('auth/register','Auth\RegisterController@register');
