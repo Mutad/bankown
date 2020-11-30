@@ -16,7 +16,7 @@ class CreateCardsTable extends Migration
         Schema::create('cards', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->double('balance');
+            $table->double('balance')->unsigned();
             $table->string('currency',3);
             $table->foreignId('telegram_user_id');
             $table->timestamps();

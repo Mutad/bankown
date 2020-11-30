@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Card', 'user_id', 'id');
     }
+
+    public function role()
+    {
+        return $this->hasOne('App\Role', 'user_id', 'id');
+    }
 }
