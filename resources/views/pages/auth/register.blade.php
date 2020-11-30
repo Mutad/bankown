@@ -15,7 +15,7 @@
     <div class="text-center">
         <h1>Create your account</h1>
         <div>
-        <a href="{{route('auth.login')}}">Already have an account? Find it here.</a>
+        <a href="/hub/auth/login">Already have an account? Find it here.</a>
         </div>
         <hr>
     </div>
@@ -95,30 +95,6 @@
                 </div>
                 @endif
         </div>
-
-{{-- Phone number --}}
-{{-- <hr>
-        <div class="form-group col-lg-8">
-            @include('partials.select-country-codes')
-        </div> --}}
-
-{{-- <hr>
-        <div class="form-check">
-
-            <input type="checkbox" name="announcements" id="checkbox-announcements" class="form-check-input">
-            <label for="checkbox-announcements" class="form-check-label d-flex flex-column">
-                <span class="h5 mb-0">Announcements</span>
-                <small class="text-muted">Get announcements, recommendations, and updates about Apple products, services, and software.</small>
-            </label>
-        </div> --}}
-{{-- <div class="form-check">
-
-            <input type="checkbox" name="announcements" id="checkbox-announcements" class="form-check-input">
-            <label for="checkbox-announcements" class="form-check-label d-flex flex-column">
-                <span class="h5 mb-0">Announcements</span>
-                <small class="text-muted">Get announcements, recommendations, and updates about Apple products, services, and software.</small>
-            </label>
-        </div> --}}
 <hr>
 
 <div class="col-lg-8">

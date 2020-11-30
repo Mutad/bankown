@@ -1,4 +1,4 @@
-<h1>Privacy Policy</h1>
+{{-- <h1>Privacy Policy</h1>
 <p>Last updated: September 22, 2020</p>
 <p>This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p>
 <p>We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy. This Privacy Policy has been created with the help of the <a href="https://www.termsfeed.com/privacy-policy-generator/" target="_blank">Privacy Policy Generator</a>.</p>
@@ -159,6 +159,6 @@
 <p>By email: mutado.nzr@gmail.com</p>
 </li>
 <li>
-<p>By visiting this page on our website: <a href="https://www.mutad.ml/contact" rel="external nofollow noopener" target="_blank">https://www.mutad.ml/contact</a></p>
+<p>By visiting this page on our website: <a href="{{route('contact',app()->getLocale())}}" rel="external nofollow noopener" target="_blank">{{route('contact',app()->getLocale())}}</a></p>
 </li>
-</ul>
+</ul> --}}

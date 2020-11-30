@@ -14,15 +14,19 @@
 </head>
 
 <body class="d-flex flex-column">
-    {{-- @include('partials.header') --}}
+    @if (strpos(Route::currentRouteName(), 'hub') !== 0)
     @include('partials.header')
-    <div class="content d-flex flex-column align-items-center justify-content-center">
+    @endif
+
+    <div id="app" class="content d-flex flex-column align-items-center justify-content-center">
         @section('content')
         @show
     </div>
+
     @if (strpos(Route::currentRouteName(), 'hub') !== 0)
     @include('partials.footer')
     @endif
+    
     <script src="{{asset('js/app.js')}}"></script>
 </body>
 

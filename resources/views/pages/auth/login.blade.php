@@ -11,7 +11,7 @@
         <input class="form-control" type="text" name="password" id="input-password" placeholder="Your password">
     </div>
 </form> --}}
-<div class="container">
+{{-- <div class="container">
     <div class="row">
         <div class="col-lg login">
             <h1 class="align-self-start">Please sign in</h1>
@@ -52,5 +52,6 @@
             @include('modules.features')
         </div>
     </div>
-</div>
+</div> --}}
+<login-component></login-component>
 @endsection
