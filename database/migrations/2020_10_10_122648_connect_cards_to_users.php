@@ -15,7 +15,7 @@ class ConnectCardsToUsers extends Migration
     public function up()
     {
         Schema::table('cards', function (Blueprint $table) {
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->default('');
         });
     }
 
