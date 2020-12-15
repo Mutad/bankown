@@ -22,9 +22,9 @@ Route::group(['as' => 'api.'], function () {
         Route::get('auth/user', function (Request $request) {
             return response()->json($request->user(), 200);
         });
-        Route::resource('user', 'Api\UserController');
-        Route::resource('card', 'Api\CardController')->except(['create', 'edit']);
-        Route::get('card/info/{number}', 'Api\CardController@showByNumber');
+        Route::resource('users', 'Api\UserController');
+        Route::resource('cards', 'Api\CardController')->except(['create', 'edit']);
+        Route::get('card/{number}/info', 'Api\CardController@showByNumber')->name('cards.info');
         Route::post('transaction', 'Api\TransactionController@createTransaction');
     });
 
@@ -33,7 +33,7 @@ Route::group(['as' => 'api.'], function () {
     })->name('status');
 
     Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
-        Route::post('login', 'Auth\LoginController@login')->name('login');
-        Route::post('register', 'Auth\RegisterController@register')->name('register');
+        Route::post('login', 'Api\Auth\LoginController@login')->name('login');
+        Route::post('register', 'Api\Auth\RegisterController@register')->name('register');
     });
 });
