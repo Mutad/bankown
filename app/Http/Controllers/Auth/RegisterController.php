@@ -35,10 +35,9 @@ class RegisterController extends Controller
         $token->expires_at = Carbon::now()->addWeeks(1);
         $token->save();
 
-        Log::info('register');
         return response()->json([
-            'access_token'=> 'Bearer '.$tokenResult->accessToken,
-            'user'=>$user,
+            'access_token' => 'Bearer ' . $tokenResult->accessToken,
+            'user' => $user,
             'expires_at' => Carbon::parse(
                 $tokenResult->token->expires_at
             )->toDateTimeString()
