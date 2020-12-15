@@ -25,7 +25,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-Route::group(['prefix' => '/hub','as'=>'hub.'], function () {
+Route::group(['prefix' => '/hub', 'as' => 'hub.'], function () {
     Route::get('/{any?}', function () {
         // return view('pages.hub.index');
         return view('pages.spa');
@@ -43,13 +43,15 @@ Route::group(['prefix' => '/legal'], function () {
     })->name('privacy_policy');
 });
 
-Route::group(['prefix' => '/auth','as'=>'auth.'], function () {
+Route::redirect('login', '/hub/login', 301)->name('login');
+
+Route::group(['prefix' => '/auth', 'as' => 'auth.'], function () {
     // Route::get('login', 'Auth\LoginController@show')->name('login');
-    
+
     // Route::post('login', 'Auth\LoginController@login');
-    
+
     // Route::get('register', 'Auth\RegisterController@create')->name('register');
-    
+
     // Route::post('register', 'Auth\RegisterController@store');
     // Route::post('forgot', 'Auth\LoginController@forgot')->name('forgot');
 
@@ -57,7 +59,7 @@ Route::group(['prefix' => '/auth','as'=>'auth.'], function () {
 
     Route::get('/{any?}', function ($id) {
         return view('pages.spa');
-    })->where('any','.*');
+    })->where('any', '.*');
 });
 
 Route::get('contact', function () {
