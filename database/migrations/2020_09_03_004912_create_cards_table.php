@@ -17,8 +17,7 @@ class CreateCardsTable extends Migration
             $table->id();
             $table->string('name');
             $table->double('balance')->unsigned();
-            $table->string('currency',3);
-            $table->foreignId('telegram_user_id');
+            $table->string('currency', 3);
             $table->timestamps();
         });
     }
