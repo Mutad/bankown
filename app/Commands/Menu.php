@@ -28,26 +28,25 @@ class Menu extends Command
     {
         $update = $this->getUpdate();
 
-        Log::debug($update);
         if ($user = TelegramUser::find($update->getMessage()['from']['id'])) {
             $user->state = null;
             $user->save();
         }
-        
+
         $keyboard = Keyboard::make()->inline()
-        ->row(
-            Keyboard::inlineButton(['text' => '💳Select card', 'callback_data' => 'cards']),
-        )->row(
-            Keyboard::inlineButton(['text' => '⚙️Settings', 'callback_data' => 'settings']),
-        )->row(
-            Keyboard::inlineButton(['text' => 'ℹ️Status', 'callback_data' => 'status']),
-        );
+            ->row(
+                Keyboard::inlineButton(['text' => '💳Select card', 'callback_data' => 'cards']),
+            )->row(
+                Keyboard::inlineButton(['text' => '⚙️Settings', 'callback_data' => 'settings']),
+            )->row(
+                Keyboard::inlineButton(['text' => 'ℹ️Status', 'callback_data' => 'status']),
+            );
 
         $data = [
-            'text'=>'Menu',
-            'message_id'=> $this->getUpdate()->getMessage()['message_id'],
-            'chat_id'=>$this->getUpdate()->getChat()['id'],
-            'reply_markup'=> $keyboard
+            'text' => 'Menu',
+            'message_id' => $this->getUpdate()->getMessage()['message_id'],
+            'chat_id' => $this->getUpdate()->getChat()['id'],
+            'reply_markup' => $keyboard
         ];
 
         if ($update->isType('callback_query') && $update->getMessage()['from']['is_bot']) {

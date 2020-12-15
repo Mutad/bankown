@@ -46,7 +46,6 @@ class CardController extends Controller
     function generateCardNumber($id) {
         $prefix = "41110441";
         
-        Log::info(strlen($id));
         $postfix = "";
         for($i = 0;$i<8-strlen($id);$i++){
             $postfix .= "0";

@@ -32,19 +32,16 @@ class OpenCard extends Command
         $text = "";
         $update = $this->getUpdate();
 
-        if ($user = TelegramUser::find($update->getMessage()['chat']['id'])){
-            if ($user->cards->count()>= 2){
-                $text = 'Curently you can open only '.$user->cards->count().' cards';
-            }
-            else{
-                $card = Card::Create(['name'=>'Card','balance'=>0,'currency'=>'USD','telegram_user_id'=>$user->id]);
+        if ($user = TelegramUser::find($update->getMessage()['chat']['id'])) {
+            if ($user->cards->count() >= 2) {
+                $text = 'Curently you can open only ' . $user->cards->count() . ' cards';
+            } else {
+                $card = Card::Create(['name' => 'Card', 'balance' => 0, 'currency' => 'USD', 'telegram_user_id' => $user->id]);
                 $user->save([$card]);
                 $this->triggerCommand('cards');
             }
-        }
-        else{
+        } else {
             $text = "User not found";
-            Log::error($text. " ". $update);
         }
         // $data = [
         //     'text'=>$text,
@@ -61,6 +58,5 @@ class OpenCard extends Command
         // }
 
         $this->triggerCommand('cards');
-
     }
 }

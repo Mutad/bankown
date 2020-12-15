@@ -3,7 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
 use Throwable;
+use Log;
 
 class Handler extends ExceptionHandler
 {
@@ -50,10 +52,14 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        if ($this->isHttpException($exception)) {
-            return response()->view('error', ['error_code'=>$exception->getStatusCode()]);
+        if (!$request->wantsJson()) {
+            // return HTML response
+            if ($this->isHttpException($exception)) {
+                // Add status code to response
+                $statusCode = $exception->getStatusCode();
+                return response()->view('error', ['error_code' => $statusCode])->setStatusCode($statusCode);;
+            }
         }
-
         return parent::render($request, $exception);
     }
 }

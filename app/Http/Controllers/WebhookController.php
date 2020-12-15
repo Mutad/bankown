@@ -21,54 +21,50 @@ class WebhookController extends Controller
             $update = Telegram::commandsHandler(true);
             $telegram = new \Telegram\Bot\Api;
 
-            Log::debug($update);
-            
             if (isset($update['inline_query'])) {
                 $this->processInlineQuery($update);
                 return;
             }
 
-            Log::info('Incomming '.$update->detectType().' from '.$update->getMessage()['from']['username']);
+            Log::info('Incomming ' . $update->detectType() . ' from ' . $update->getMessage()['from']['username']);
 
             if (isset($update['message']) && !TelegramUser::find($update['message']['from']['id'])) {
-                Log::info('New user start '.json_encode($update['message']['from']));
                 TelegramUser::create($update['message']['from']);
             }
 
             switch ($update->detectType()) {
-            case 'message':
-                $this->processMessage($update);
-                break;
+                case 'message':
+                    $this->processMessage($update);
+                    break;
 
-            case 'callback_query':
-                
-                $result = json_decode($update, true);
+                case 'callback_query':
 
-                $callback_data = $result['callback_query']['data'];
-                // $callback_id = $result['callback_query']['message']['chat']['id'];
-                // $callback_message_id = $result['callback_query']['message']['message_id'];
+                    $result = json_decode($update, true);
 
-                // $arguments = explode(' ', $callback_data);
-                // $command = array_shift($arguments);
+                    $callback_data = $result['callback_query']['data'];
+                    // $callback_id = $result['callback_query']['message']['chat']['id'];
+                    // $callback_message_id = $result['callback_query']['message']['message_id'];
 
-                // Log::debug('Command: '.$command. "\n". 'Arguments: '.json_encode($arguments));
+                    // $arguments = explode(' ', $callback_data);
+                    // $command = array_shift($arguments);
 
-                // $command_obj = new $command();
-                // $command_obj->setArguments($arguments);
-                // $command_obj->make($telegram, $update, []);
-                
-                // $message_update = $update['callback_query'];
-                // $message_update['message']['entities'][0] = ['offset'=>0,'length'=>strlen($callback_data),'type'=>'bot_command'];
-                // $update['callback_query'] = $message_update;
-                // $update['callback_query']['message']['entities'][0] = ['offset'=>0,'length'=>strlen($callback_data),'type'=>'bot_command'];
-                $this->triggerCommand($callback_data, $update);
 
-                break;
-            case 'chosen_inline_result':
-                $result = $update['chosen_inline_result'];
-                $this->triggerCommand('transaction '.$result['result_id'].' '.$result['query'], $update);
-            break;
-        }
+                    // $command_obj = new $command();
+                    // $command_obj->setArguments($arguments);
+                    // $command_obj->make($telegram, $update, []);
+
+                    // $message_update = $update['callback_query'];
+                    // $message_update['message']['entities'][0] = ['offset'=>0,'length'=>strlen($callback_data),'type'=>'bot_command'];
+                    // $update['callback_query'] = $message_update;
+                    // $update['callback_query']['message']['entities'][0] = ['offset'=>0,'length'=>strlen($callback_data),'type'=>'bot_command'];
+                    $this->triggerCommand($callback_data, $update);
+
+                    break;
+                case 'chosen_inline_result':
+                    $result = $update['chosen_inline_result'];
+                    $this->triggerCommand('transaction ' . $result['result_id'] . ' ' . $result['query'], $update);
+                    break;
+            }
         } catch (\Throwable $th) {
             Log::error($th);
         }
@@ -77,7 +73,7 @@ class WebhookController extends Controller
     private function triggerCommand($command, $update)
     {
         $telegram = new \Telegram\Bot\Api;
-        $telegram->getCommandBus()->execute($command, $update, ['offset'=>0,'length'=>strlen($command),'type'=>'bot_command']);
+        $telegram->getCommandBus()->execute($command, $update, ['offset' => 0, 'length' => strlen($command), 'type' => 'bot_command']);
     }
 
     public function processMessage($update)
@@ -100,7 +96,7 @@ class WebhookController extends Controller
                 $state_args = explode(' ', $user->state);
                 $state = array_shift($state_args);
                 $update['callback_query'] = [
-                    'message'=>$update['message']
+                    'message' => $update['message']
                 ];
                 unset($update['message']);
                 switch ($state) {
@@ -108,12 +104,12 @@ class WebhookController extends Controller
                         $card = Card::find($state_args[0]);
                         $card->name = $update->getMessage()['text'];
                         $card->save();
-                        $telegram->getCommandBus()->execute('card '.$state_args[0], $update, []);
+                        $telegram->getCommandBus()->execute('card ' . $state_args[0], $update, []);
                         break;
                     case 'transaction':
-                        $txt = $user->state.' '.$update->getMessage()['text'];
-                        $telegram->getCommandBus()->execute($user->state.' '.$update->getMessage()['text'], $update, ['offset'=>0,'length'=>strlen($txt)]);
-                    break;
+                        $txt = $user->state . ' ' . $update->getMessage()['text'];
+                        $telegram->getCommandBus()->execute($user->state . ' ' . $update->getMessage()['text'], $update, ['offset' => 0, 'length' => strlen($txt)]);
+                        break;
 
                     default:
                         # code...
@@ -166,14 +162,14 @@ class WebhookController extends Controller
                 $inlineQueryResultArticles,
                 new InlineQueryResultArticle(
                     [
-                    'id' => '123',
-                    'title' => 'Enter recipient username or card id',
-                    'thumb_url'=>'https://mutad.ml/logo.png',
-                    'description'=>'(username) (money)',
-                    'input_message_content' => new InputTextMessageContent([
-                        'message_text' => 'Provide valid data to make request',
-                    ]),
-                ]
+                        'id' => '123',
+                        'title' => 'Enter recipient username or card id',
+                        'thumb_url' => 'https://mutad.ml/logo.png',
+                        'description' => '(username) (money)',
+                        'input_message_content' => new InputTextMessageContent([
+                            'message_text' => 'Provide valid data to make request',
+                        ]),
+                    ]
                 )
             );
         } else {
@@ -185,33 +181,33 @@ class WebhookController extends Controller
                         $inlineQueryResultArticles,
                         new InlineQueryResultArticle(
                             [
-                            'id' => '123',
-                            'title' => 'Enter amount of money to transfer to '.$params[0],
-                            'thumb_url'=>'https://mutad.ml/logo.png',
-                            'description'=>'(money)',
-                            'input_message_content' => new InputTextMessageContent([
-                                'message_text' => 'Provide valid data to make request',
-                            ]),
-                        ]
+                                'id' => '123',
+                                'title' => 'Enter amount of money to transfer to ' . $params[0],
+                                'thumb_url' => 'https://mutad.ml/logo.png',
+                                'description' => '(money)',
+                                'input_message_content' => new InputTextMessageContent([
+                                    'message_text' => 'Provide valid data to make request',
+                                ]),
+                            ]
                         )
                     );
                     break;
-                    case 2:
+                case 2:
                     foreach ($user->cards as $key => $card) {
                         array_push($inlineQueryResultArticles, new InlineQueryResultArticle(
                             [
-                            'id' => $card->id,
-                            'thumb_url'=>'https://img.icons8.com/ios/100/000000/money-transfer.png',
-                            'title' => $card->name. ' '.$card->getBalance(),
-                            'description'=>'Transfer from '. $card->name . ' to '.$params[0],
-                            'input_message_content' => new InputTextMessageContent([
-                                'message_text' => 'Transfer '.$params[1]. ' '. $card->currency .' to '.$params[0]. "\nYour transaction is now processing\nTransaction key:".Str::uuid(),
-                            ]),
-                        ]
+                                'id' => $card->id,
+                                'thumb_url' => 'https://img.icons8.com/ios/100/000000/money-transfer.png',
+                                'title' => $card->name . ' ' . $card->getBalance(),
+                                'description' => 'Transfer from ' . $card->name . ' to ' . $params[0],
+                                'input_message_content' => new InputTextMessageContent([
+                                    'message_text' => 'Transfer ' . $params[1] . ' ' . $card->currency . ' to ' . $params[0] . "\nYour transaction is now processing\nTransaction key:" . Str::uuid(),
+                                ]),
+                            ]
                         ));
                     }
                     break;
-                
+
                 default:
                     # code...
                     break;
@@ -219,7 +215,7 @@ class WebhookController extends Controller
         }
 
 
-        
+
         // new InlineQueryResultArticle([
         //     'id' => 123,
         //     'thumb_url'=>'https://img.icons8.com/ios/100/000000/money-transfer.png',
