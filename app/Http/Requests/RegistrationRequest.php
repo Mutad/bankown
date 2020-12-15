@@ -26,11 +26,11 @@ class RegistrationRequest extends FormRequest
         return [
             'first_name' => 'required',
             'last_name' => 'required',
-            'country'=>'required',
-            'birth_date'=>'required|date_format:d/m/Y',
+            'country' => 'required',
+            'birth_date' => 'required|date_format:m/d/Y',
             'email' => 'required|email|unique:users,email',
-            'password'=>'required|min:6',
-            'password_repeat'=>'required|same:password'
+            'password' => 'required|min:6',
+            'password_repeat' => 'required|same:password'
         ];
     }
 }

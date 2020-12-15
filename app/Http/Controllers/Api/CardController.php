@@ -19,7 +19,10 @@ class CardController extends Controller
      */
     public function index()
     {
-        return response()->json(Auth::user()->cards, 200);
+        if (Auth::check())
+            return response()->json(Auth::user()->cards, 200);
+        else
+            return response()->json(['message' => 'access forbiden'], 403);
     }
 
     /**
@@ -34,20 +37,22 @@ class CardController extends Controller
 
         $card->balance = 0;
         $card->number = "0000000000000000";
+        $card->user_id = Auth::user()->id;
 
         Auth::user()->cards()->save($card);
 
         $card->number = $this->generateCardNumber($card->id);
         $card->save();
 
-        return response()->json($card, 200);
+        return response()->json($card, 201);
     }
 
-    function generateCardNumber($id) {
+    function generateCardNumber($id)
+    {
         $prefix = "41110441";
-        
+
         $postfix = "";
-        for($i = 0;$i<8-strlen($id);$i++){
+        for ($i = 0; $i < 8 - strlen($id); $i++) {
             $postfix .= "0";
         }
         $postfix .= $id;
@@ -56,14 +61,13 @@ class CardController extends Controller
 
     public function showByNumber($number)
     {
-        $card = Card::where('number',$number)->first();
-        if ($card){
+        $card = Card::where('number', $number)->first();
+        if ($card) {
             return response()->json([
-                'currency'=>$card->currency,
-                'owner'=>$card->owner->full_name(),
+                'currency' => $card->currency,
+                'owner' => $card->owner->full_name(),
             ], 200);
-        }
-        else{
+        } else {
             return response()->json(null, 404);
         }
     }
@@ -76,18 +80,25 @@ class CardController extends Controller
      */
     public function show(Card $card)
     {
-        //
+        if (Auth::user()->id == $card->owner->id) {
+            return response()->json($card, 200);
+        }
+
+        return response()->json(['error' => 'not enough access'], 403);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\CardUpdationRequest  $request
      * @param  \App\Card  $card
      * @return \Illuminate\Http\Response
      */
     public function update(CardUpdationRequest $request, Card $card)
     {
+        if (Auth::user()->id != $card->owner->id)
+            return response()->json(['error' => 'not enough access'], 403);
+
         $card->name = $request->name;
         $card->save();
         return response()->json($card, 200);
@@ -101,10 +112,10 @@ class CardController extends Controller
      */
     public function destroy(Card $card)
     {
-        if ($card->user_id == Auth::user()->id)
-            $card->delete();
-        else
-            return response()->json(null,403);
+        if ($card->user_id != Auth::user()->id)
+            return response()->json(['error' => 'not enough access'], 403);
+
+        $card->delete();
         return response()->json(null, 200);
     }
 }

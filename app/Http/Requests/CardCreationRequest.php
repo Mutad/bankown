@@ -26,8 +26,8 @@ class CardCreationRequest extends FormRequest
         return [
             'name' => 'required|string|max:26|min:2',
             'currency' => 'required|string|size:3|in:USD',
-            'user_id'=>'required|exists:users,id',
-            'type'=>'required|in:DEBIT,CREDIT',
+            // 'user_id'=>'required|exists:users,id',
+            'type' => 'required|in:DEBIT,CREDIT',
             // 'number' => 'required|email|unique:cards,number',
         ];
     }

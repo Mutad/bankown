@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name','last_name','country','birth_date', 'email', 'password',
+        'first_name', 'last_name', 'country', 'birth_date', 'email', 'password',
     ];
 
     /**
@@ -39,7 +39,8 @@ class User extends Authenticatable
         'birth_date' => 'datetime',
     ];
 
-    public function full_name(){
+    public function full_name()
+    {
         return $this->attributes['first_name'] . ' ' . $this->attributes['last_name'];
     }
 
