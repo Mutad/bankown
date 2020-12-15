@@ -8,10 +8,10 @@ use Faker\Generator as Faker;
 $factory->define(Card::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
-        'balance' => $faker->numberBetween(10,100),
-        'currency'=> $faker->currencyCode,
-        'user_id'=> User::all()->random()->id,
-        'type'=>'DEBIT',
-        'number'=>$faker->creditCardNumber
+        'balance' => $faker->numberBetween(10, 100),
+        'currency' => 'USD',
+        'user_id' => factory('App\User')->create()->id,
+        'type' => 'DEBIT',
+        'number' => $faker->creditCardNumber
     ];
 });
