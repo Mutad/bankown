@@ -20,8 +20,6 @@ use Illuminate\Support\Facades\Route;
 Route::group(['as' => 'api.'], function () {
     Route::group(['middleware' => ['auth:api']], function () {
         Route::get('auth/user', function (Request $request) {
-            dd('this endpoint');
-            Log::info('this endpoint');
             return response()->json($request->user(), 200);
         });
         Route::resource('users', 'Api\UserController');
