@@ -106,4 +106,39 @@ class RegisterControllerTest extends TestCase
             ]
         ]);
     }
+
+    /**
+     * @group API
+     * @return void
+     */
+    public function testDateFormatValidation()
+    {
+        $user = factory('App\User')->make();
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->post(route('api.auth.register'), [
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'country' => $user->country,
+            'birth_date' => '05/30/1990',
+            'email' => $user->email,
+            'password' => 'password',
+            'password_repeat' => 'password'
+        ]);
+        $response->assertCreated();
+
+        $user = factory('App\User')->make();
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->post(route('api.auth.register'), [
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'country' => $user->country,
+            'birth_date' => '30/05/1990',
+            'email' => $user->email,
+            'password' => 'password',
+            'password_repeat' => 'password'
+        ]);
+        $response->assertStatus(422);
+    }
 }

@@ -26,6 +26,6 @@ $factory->define(User::class, function (Faker $faker) {
         'email_verified_at' => now(),
         'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
         'country' => 'Atlantis',
-        'birth_date' => Carbon::now()->subYears(20)
+        'birth_date' => Carbon::now()->subYears(20)->format('m/d/Y')
     ];
 });

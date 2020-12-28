@@ -21,6 +21,7 @@ class RegisterController extends Controller
      */
     public function register(RegistrationRequest $requestFields)
     {
+        Log::info($requestFields->birth_date);
         $user = $this->registerUser($requestFields);
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
@@ -33,6 +34,6 @@ class RegisterController extends Controller
             'expires_at' => Carbon::parse(
                 $tokenResult->token->expires_at
             )->toDateTimeString()
-        ], 200);
+        ], 201);
     }
 }
