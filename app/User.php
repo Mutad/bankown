@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -52,5 +53,12 @@ class User extends Authenticatable
     public function role()
     {
         return $this->hasOne('App\Role', 'user_id', 'id');
+    }
+
+
+    // Mutators
+    public function setBirthDateAttribute($value)
+    {
+        $this->attributes['birth_date'] = Carbon::createFromFormat(config('app.date_format'), $value)->format('Y-m-d');
     }
 }
