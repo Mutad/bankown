@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 
 class RegistrationRequest extends FormRequest
 {
@@ -27,7 +28,7 @@ class RegistrationRequest extends FormRequest
             'first_name' => 'required',
             'last_name' => 'required',
             'country' => 'required',
-            'birth_date' => 'required|date_format:m/d/Y',
+            'birth_date' => 'required|date_format:d/m/Y',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'password_repeat' => 'required|same:password'

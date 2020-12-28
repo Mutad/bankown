@@ -21,7 +21,6 @@ class RegisterController extends Controller
      */
     public function register(RegistrationRequest $requestFields)
     {
-        Log::info($requestFields->birth_date);
         $user = $this->registerUser($requestFields);
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;

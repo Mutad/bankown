@@ -76,12 +76,12 @@ class RegisterControllerTest extends TestCase
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'country' => $user->country,
-            'birth_date' => $user->birth_date->format('m/d/Y'),
+            'birth_date' => $user->birth_date->format('d/m/Y'),
             'email' => $user->email,
             'password' => 'password',
             'password_repeat' => 'password'
         ]);
-        // $response->assertStatus(200);
+        $response->assertStatus(201);
         $response->assertJsonStructure([
             'access_token',
             'expires_at',
@@ -113,20 +113,7 @@ class RegisterControllerTest extends TestCase
      */
     public function testDateFormatValidation()
     {
-        $user = factory('App\User')->make();
-        $response = $this->withHeaders([
-            'Accept' => 'application/json',
-        ])->post(route('api.auth.register'), [
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'country' => $user->country,
-            'birth_date' => '05/30/1990',
-            'email' => $user->email,
-            'password' => 'password',
-            'password_repeat' => 'password'
-        ]);
-        $response->assertCreated();
-
+        // full date format
         $user = factory('App\User')->make();
         $response = $this->withHeaders([
             'Accept' => 'application/json',
@@ -135,6 +122,51 @@ class RegisterControllerTest extends TestCase
             'last_name' => $user->last_name,
             'country' => $user->country,
             'birth_date' => '30/05/1990',
+            'email' => $user->email,
+            'password' => 'password',
+            'password_repeat' => 'password'
+        ]);
+        $response->assertCreated();
+
+        // month without 0 at begining
+        $user = factory('App\User')->make();
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->post(route('api.auth.register'), [
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'country' => $user->country,
+            'birth_date' => '30/5/1990',
+            'email' => $user->email,
+            'password' => 'password',
+            'password_repeat' => 'password'
+        ]);
+        $response->assertStatus(422);
+
+        // wrong format
+        $user = factory('App\User')->make();
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->post(route('api.auth.register'), [
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'country' => $user->country,
+            'birth_date' => '1990-05-30',
+            'email' => $user->email,
+            'password' => 'password',
+            'password_repeat' => 'password'
+        ]);
+        $response->assertStatus(422);
+
+        // wrong month
+        $user = factory('App\User')->make();
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->post(route('api.auth.register'), [
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'country' => $user->country,
+            'birth_date' => '13/1/2000',
             'email' => $user->email,
             'password' => 'password',
             'password_repeat' => 'password'
