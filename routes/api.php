@@ -25,6 +25,7 @@ Route::group(['as' => 'api.'], function () {
         Route::resource('users', 'Api\UserController');
         Route::resource('cards', 'Api\CardController')->except(['create', 'edit']);
         Route::get('card/{number}/info', 'Api\CardController@showByNumber')->name('cards.info');
+        Route::get('cards/{card}/transactions', 'Api\TransactionController@getTransactionsOfCard')->name('cards.transactions');
         Route::post('transaction', 'Api\TransactionController@createTransaction');
     });
 

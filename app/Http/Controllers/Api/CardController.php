@@ -64,6 +64,7 @@ class CardController extends Controller
         $card = Card::where('number', $number)->first();
         if ($card) {
             return response()->json([
+                'id' => $card->id,
                 'currency' => $card->currency,
                 'owner' => $card->owner->full_name(),
             ], 200);
