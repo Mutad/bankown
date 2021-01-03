@@ -1,6 +1,9 @@
 <template>
   <div class="plate-wrapper">
-    <h2 class="plate border">Sent money to</h2>
+    <h2 class="plate border">
+      Sent money
+      <span v-if="recieverInfo">to {{ recieverInfo.owner }}</span>
+    </h2>
     <div class="plate border form-group">
       <label for="cardSender"><h3>Select your card to send from</h3></label>
       <select
@@ -78,7 +81,7 @@ export default {
       if (this.cardReciever.length == 16) {
         if (/^\d+$/.test(this.cardReciever)) {
           axios({
-            url: "/api/card/info/" + this.cardReciever,
+            url: "/api/card/" + this.cardReciever + "/info",
             method: "GET",
           })
             .then((result) => {
@@ -103,12 +106,17 @@ export default {
         this.amount >= 0.01
       ) {
         axios({
-          url: "api/transaction",
+          url: "/api/transaction",
           method: "POST",
           data: {
-            
-          }
-        })
+            sender_card_id: this.cardSender.id,
+            reciever_card_id: this.recieverInfo.id,
+            amount: this.amount,
+          },
+        }).then((result) => {
+          console.log(result);
+        });
+        // alert("in active development");
       }
     },
   },

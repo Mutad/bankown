@@ -3,8 +3,9 @@
     <header>
       <a href="/"><img src="/logo.png" alt="logo" class="logo" /></a>
     </header>
-    <router-link class="btn" :to="{ name: 'banking' }">Banking</router-link>
-    <router-link class="btn" :to="{ name: 'profile' }">profile</router-link>
+    <router-link class="btn" :to="{ name: 'hub' }">Hub</router-link>
+    <router-link class="btn" :to="{ name: 'cards' }">Cards</router-link>
+    <router-link class="btn" :to="{ name: 'profile' }">Profile</router-link>
     <div class="btn" @click="logout()">logout</div>
   </div>
 </template>
