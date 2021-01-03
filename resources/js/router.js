@@ -2,16 +2,16 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from './store.js'
 
-import HubComponent from './components/HubComponent'
-import AppComponent from './components/AppComponent'
-import ProfileComponent from './components/ProfileComponent'
-import LoginComponent from './components/LoginComponent'
-import NewCardComponent from './components/hub/NewCardComponent'
-import CardComponent from './components/hub/CardComponent'
-import RegisterComponent from './components/RegisterComponent'
-import TransactionComponent from './components/TransactionComponent'
-import CardsPageComponent from './components/CardsPageComponent';
+import AppComponent from './layouts/AppComponent'
 
+import HubComponent from './pages/Hub'
+import ProfileComponent from './pages/Profile'
+import LoginComponent from './pages/Auth/Login.vue'
+import NewCardComponent from './pages/CreateCard'
+import CardComponent from './pages/Card'
+import RegisterComponent from './pages/Auth/Register.vue'
+import TransactionComponent from './pages/CreateTransaction'
+import CardsPageComponent from './pages/Cards';
 Vue.use(Router)
 
 
@@ -21,9 +21,9 @@ const router = new Router({
   routes: [
 
     {
-      path: '/app',
-      name: 'application',
-      redirect: '/app/hub',
+      path: '/app/',
+      // name: 'application',
+      // redirect: '/app/hub',
       component: AppComponent,
 
       meta: {
@@ -31,7 +31,7 @@ const router = new Router({
       },
       children: [
         {
-          path: 'hub',
+          path: '',
           component: HubComponent,
           name: 'hub'
         },

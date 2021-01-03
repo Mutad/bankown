@@ -26,6 +26,9 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::group(['prefix' => '/app', 'as' => 'app.'], function () {
+    Route::get('/', function () {
+        return view('pages.spa');
+    });
     Route::get('/{any?}', function () {
         return view('pages.spa');
     })->where('any', '.*')->name('');

@@ -21,9 +21,9 @@
 
 <script>
 import { mapGetters } from "vuex";
-import CardPlateComponent from "./CardPlateComponent.vue";
+// import CardPlateComponent from "../../components/ui/CardPlateComponent";
 export default {
-  components: { CardPlateComponent },
+  // components: { CardPlateComponent },
   computed: {
     ...mapGetters(["cards"]),
   },
