@@ -41,6 +41,8 @@ export default new Vuex.Store({
         logout(state) {
             state.status = "";
             state.token = "";
+            state.cards = [];
+            state.cardsStatus = "";
         },
         user(state, user) {
             console.log("User loaded " + user.id);
@@ -58,6 +60,10 @@ export default new Vuex.Store({
         add_card(state, card) {
             state.cards.push(card);
         },
+        errors(state, errors) {
+            state.errors = errors
+            console.log(errors)
+        }
     },
 
     actions: {
@@ -73,7 +79,7 @@ export default new Vuex.Store({
                     method: "POST"
                 })
                     .then(resp => {
-                        const token = resp.data.access_token;
+                        const token = resp.data.token_type + ' ' + resp.data.access_token;
                         const user = resp.data.user;
                         localStorage.setItem("token", token);
                         axios.defaults.headers.common["Authorization"] = token;
@@ -87,9 +93,9 @@ export default new Vuex.Store({
                         // resolve(resp)
                     })
                     .catch(error => {
-                        console.log(error);
                         commit("auth_error");
                         localStorage.removeItem("token");
+                        commit('errors', error.response.data.error)
                         reject(error);
                     });
             });
@@ -148,16 +154,19 @@ export default new Vuex.Store({
         },
 
         loadCards({ commit }) {
+            console.log(this.state.cardsStatus);
             if (this.state.cardsStatus !== "success")
                 return new Promise((resolve, reject) => {
                     commit("cards_request");
-                    axios({ url: "/api/card", method: "GET" })
+                    axios({ url: "/api/cards", method: "GET" })
                         .then(resp => {
                             const cards = resp.data;
+                            console.log(cards);
                             commit("cards", cards);
                             resolve(resp);
                         })
                         .catch(err => {
+                            console.log("here");
                             commit("cards_error", err);
                             reject(err);
                         });
@@ -166,13 +175,13 @@ export default new Vuex.Store({
 
         createCard({ commit }, card) {
             return new Promise((resolve, reject) => {
-                axios({ url: "/api/card", method: "POST", data: card })
+                axios({ url: "/api/cards", method: "POST", data: card })
                     .then(resp => {
                         console.log(resp.data);
                         const card = resp.data;
 
                         commit("add_card", card);
-                        router.push({ name: "main" });
+                        router.push({ name: "hub" });
                         resolve(resp);
                     })
                     .catch(err => {

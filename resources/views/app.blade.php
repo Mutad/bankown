@@ -14,7 +14,7 @@
 </head>
 
 <body class="d-flex flex-column">
-    @if (strpos(Route::currentRouteName(), 'hub') !== 0)
+    @if (strpos(Route::currentRouteName(), 'app.') !== 0)
     @include('partials.header')
     @endif
 
@@ -23,10 +23,10 @@
         @show
     </div>
 
-    @if (strpos(Route::currentRouteName(), 'hub') !== 0)
+    @if (strpos(Route::currentRouteName(), 'app.') !== 0)
     @include('partials.footer')
     @endif
-    
+
     <script src="{{asset('js/app.js')}}"></script>
 </body>
 
