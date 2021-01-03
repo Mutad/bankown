@@ -11,10 +11,10 @@ export default {
   // Check if loged in
   created() {
     this.$http.interceptors.response.use(undefined, function (err) {
-      console.log("Interception");
       return new Promise(function (resolve, reject) {
         if (err.response) {
           if (err.response.status === 401) {
+            console.log("Unauthorized");
             router.push({ name: "auth.login" });
             store.dispatch("logout");
           }
