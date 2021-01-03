@@ -13,12 +13,8 @@
               id="input-email"
               placeholder="Your email"
             />
-            <!-- @if ($errors->has('email'))
-                    <div class="error">
-                        {{ $errors->first('email') }}
-                    </div>
-                    @endif -->
           </div>
+
           <div class="form-group">
             <input
               v-model="password"
@@ -28,17 +24,12 @@
               id="input-password"
               placeholder="Your password"
             />
-            <!-- @if ($errors->has('password'))
-                    <div class="error">
-                        {{ $errors->first('password') }}
-                    </div>
-                    @endif -->
           </div>
-          <!-- @if ($errors->has('result'))
-                <div class="alert alert-danger" role="alert">
-                    {{$errors->first('result')}}
-                </div>
-                @endif -->
+
+          <div class="alert alert-danger" role="alert" v-if="errors != ''">
+            {{ errors }}
+          </div>
+
           <input
             type="submit"
             class="btn btn-primary btn-block"
@@ -56,19 +47,17 @@
           >
         </div>
       </div>
-      <!-- <div class="col-sm">
-                @include('modules.features')
-            </div> -->
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapState } from "vuex";
 export default {
   data() {
     return {
-      email: "",
-      password: "",
+      email: "mutado.nzr@gmail.com",
+      password: "123456789",
     };
   },
 
@@ -78,7 +67,10 @@ export default {
       let password = this.password;
       this.$store
         .dispatch("login", { email, password })
-        .then(() => this.$router.push({ name: "main" }))
+        .then(() => {
+          this.$router.push({ name: "hub" });
+          this.$store.dispatch("loadCards");
+        })
         .catch((err) => console.log(err));
     },
   },
@@ -88,6 +80,10 @@ export default {
     // .then(response => {
     //     console.log(response);
     // });
+  },
+
+  computed: {
+    ...mapGetters(["errors"]),
   },
 };
 </script>

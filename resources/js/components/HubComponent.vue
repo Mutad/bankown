@@ -1,82 +1,77 @@
 <template>
-  <div class="hub">
-    <sidebar-component class="sidebar"></sidebar-component>
-    <div class="content" v-if="loaded">
-      <header-component></header-component>
-      <router-view class="route"></router-view>
-    </div>
-    <div v-else class="content loader">
-      <div class="spinner-border" role="status">
-        <span class="sr-only">Loading...</span>
+  <div class="plate-wrapper">
+    <div class="plate border d-flex justify-content-between">
+      <div>
+        <span class="h2">Bankown Dashboard</span>
+        <h6 class="text-muted">Welcome back, {{ user.first_name }}</h6>
       </div>
+      <h2 class="text-right">{{ timestamp }}</h2>
+    </div>
+
+    <div>
+      <h3 class="plate margin">Frequently used:</h3>
+      <div class="plate-list">
+        <router-link :to="{ name: 'transaction' }" class="plate btn btn-primary"
+          >Make transaction</router-link
+        >
+        <router-link :to="{ name: 'new card' }" class="plate btn btn-primary"
+          >Open new card</router-link
+        >
+      </div>
+    </div>
+    <div>
+      <h3 class="plate margin">My cards:</h3>
+      <div class="plate-list mb-3">
+        <router-link
+          v-for="card in cards"
+          v-bind:key="card.id"
+          :to="{ name: 'card', params: { id: card.id } }"
+          class="btn p-0"
+        >
+          <card-plate-component v-bind:card="card"></card-plate-component>
+        </router-link>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="plate margin">Send money to:</h3>
+      <div class="plate-list">
+        <contact-plate-component></contact-plate-component>
+      </div>
+    </div>
+    <div>
+      <h3 class="plate margin">Transactions</h3>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 export default {
-  mounted() {
-    this.$store.dispatch("loadCards");
+  data() {
+    return {
+      timestamp: "",
+    };
+  },
+  created() {
+    this.getNow();
+    setInterval(this.getNow, 10000);
+  },
+  methods: {
+    getNow: function () {
+      const today = new Date();
+      const options = {
+        weekday: "long",
+        year: undefined,
+        month: "long",
+        day: "numeric",
+      };
+      this.timestamp = today.toLocaleDateString(undefined, options);
+    },
   },
   computed: {
-    ...mapGetters(["loaded"]),
+    ...mapState(["user", "status", "cardsStatus", "cards"]),
   },
 };
 </script>
-<style scoped>
-.hub {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-grow: 1;
-  width: 100%;
-}
-.icon {
-  height: 30px;
-}
-.sidebar {
-  padding: 0;
-  margin: 0;
-  height: 100%;
-  width: 160px;
-  position: fixed;
-  overflow: hidden;
-}
-
-.content {
-  position: relative;
-  width: calc(100% - 160px);
-  margin-left: 160px;
-}
-
-.content > router-link {
-  width: 100%;
-  overflow: auto;
-}
-
-.route {
-  margin-top: 50px;
-  padding-top: 10px;
-}
-.loader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (max-width: 800px) {
-  .hub {
-    flex-direction: column;
-  }
-  .sidebar {
-    display: none !important;
-    position: relative;
-    height: auto;
-  }
-  .hub .content {
-    width: 100%;
-    margin: 0;
-  }
-}
-</style>
+<style scoped></style>
