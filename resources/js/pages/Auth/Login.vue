@@ -56,8 +56,8 @@ import { mapGetters, mapState } from "vuex";
 export default {
   data() {
     return {
-      email: "mutado.nzr@gmail.com",
-      password: "123456789",
+      email: "",
+      password: "",
     };
   },
 

@@ -8,7 +8,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{route('app.')}}/hub"
+                <a href="{{route('app.')}}"
                     class="{{ (strpos(Route::currentRouteName(), 'hub') === 0) ? 'active' : '' }}">Hub</a>
             </li>
             <li><a href="#">Apps</a></li>
